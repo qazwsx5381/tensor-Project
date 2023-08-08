@@ -1,5 +1,7 @@
 <template>
-  <img id="logo" src="./assets/북로고.png" alt="">
+  <img id="logo" src="./assets/북로고.png" alt="" />
+  <button>Log_in</button>
+  <button>Sign_up</button>
   <nav>
     <router-link to="/Home">Home</router-link> /
     <router-link to="/BestSeller">Best 도서</router-link> /
@@ -8,7 +10,7 @@
     <router-link to="/bookCategory">카테고리</router-link> /
     <router-link to="/bookInformation">책정보</router-link>
   </nav>
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
@@ -23,6 +25,8 @@
 nav {
   padding: 30px;
   font-size: 30px;
+  width: 100%;
+  height: 100%;
 }
 
 nav a {
@@ -36,5 +40,11 @@ nav a.router-link-exact-active {
 #logo {
   width: 450px;
   height: 150px;
+}
+button {
+  margin: 5px;
+  border: none;
+  border-bottom: 1px solid black;
+  /* border-radius: 50px; */
 }
 </style>
