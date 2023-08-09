@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 
 const routes = [
   {
-    path: '/home',
+    path: '/',
     name: 'home',
     component: HomeView
   },
@@ -13,7 +13,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/BestSeller.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/BestSeller.vue')
   },
   {
     path: '/recommendedReading',
@@ -21,7 +22,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/recommendedReading.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/recommendedReading.vue')
   },
   {
     path: '/NewBooks',
@@ -29,7 +31,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/NewBooks.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/NewBooks.vue')
   },
   {
     path: '/category',
@@ -37,7 +40,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/bookCategory.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/bookCategory.vue')
   },
   {
     path: '/bookInformation',
@@ -45,7 +49,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/bookInformation.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/bookInformation.vue')
   }
 ]
 

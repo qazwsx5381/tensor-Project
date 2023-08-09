@@ -7,13 +7,13 @@
 </template>
 <script>
 import Content from '../components/Content.vue'
-import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 export default {
   components: {
     Content,
-    Footer,
-    Header
+    Header,
+    Footer
   }
 }
 </script>
