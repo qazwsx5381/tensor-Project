@@ -1,7 +1,7 @@
 <template>
   <section>
     <article>급상승
-      <button @click="cm = (cm === 'Nav' ? 'Adv' : 'Nav')">변경</button>
+      <!-- <button @click="cm = (cm === 'Nav' ? 'Adv' : 'Nav')">변경</button> -->
     </article>
     <component :is="cm"></component>
   </section>
@@ -10,7 +10,6 @@
 </template>
 <script>
 import Nav from './Nav.vue'
-import Adv from './Adv.vue'
 import Header from './Header.vue'
 export default {
   data() {
@@ -20,7 +19,6 @@ export default {
   },
   components: {
     Nav,
-    Adv,
     Header
   }
 }
@@ -28,7 +26,7 @@ export default {
 <style scoped>
 article {
   padding: 25px;
-  /* border: 2px solid green; */
+  border: 2px solid green;
   background-color: antiquewhite;
 }
 section {

@@ -1,12 +1,15 @@
 <template>
-  <div>나이별</div>
+  <article>
+    나이별
+  </article>
 </template>
 <script></script>
 <style scoped>
-  div {
-    text-align: center;
-        padding: 25px;
-        border: 1px solid gray;
-        background-color: rgb(240, 243, 33);
-  }
+  article {
+  padding: 25px;
+  border: 2px solid green;
+  background-color: antiquewhite;
+  display: grid;
+  grid-template-columns: 1fr;
+}
 </style>
