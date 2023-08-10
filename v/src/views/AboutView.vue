@@ -13,7 +13,7 @@
     <div id="result" v-if="test">
       <img
         id="load_image"
-        src="./no_img.png"
+        :src="img_src"
         alt=""
         style="width: 150px; height: 205px"
       />
@@ -43,7 +43,7 @@
           <span class="list_text" id="price_info"
             ><a
               id="link"
-              href="#"
+              :href="price_link"
               target="_blank"
               title="누르면 북프라이스로 연결됩니다."
               >가격정보</a
@@ -68,7 +68,9 @@ export default {
       price: '',
       publisher: '',
       publis_date: '',
-      error_msg: ''
+      error_msg: '',
+      price_link: '',
+      img_src: './no_img.png'
       // title: '실시간 모니터링 시스템을 만들며 정복하는 MEVN',
       // author: '주홍철 지음',
       // price: '32000',
@@ -139,16 +141,18 @@ export default {
           } else {
             this.test = true
             const data = JSON.parse(res.request.response)
-            const img = document.getElementById('load_image')
             this.title = data.bookname
             this.author = data.author
             this.price = data.price
             this.publisher = data.publisher
             this.publis_date = data.public_date
-            document.getElementById('link').href =
+            this.price_link =
               'https://www.bookprice.co.kr/compare.jsp?isbn=' + e
             if (data.img.length === 1) {
-              img.src = data.img[0]
+              this.img_src = data.img[0]
+            } else {
+              this.img_src =
+                'http://www.myeongin.net/app/dubu_board/docs/imgs/d/lg_d16124045780126_%EC%9D%B4%EB%AF%B8%EC%A7%80%EC%A4%80%EB%B9%84%EC%A4%91.jpg'
             }
           }
         })
@@ -167,7 +171,7 @@ button {
 }
 
 #result_txt {
-  margin: auto;
+  margin-right: 200px;
 }
 
 #result_title,
