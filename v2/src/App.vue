@@ -1,19 +1,21 @@
 <template>
   <div id="app">
-    <img id="logo" src="./assets/북로고.png" alt="Logo" />
+    <router-link to="/" id="link">
+      <img id="logo" src="./assets/북로고.png" alt="Logo" />
+    </router-link>
     <nav>
-      <router-link to="/bookCategory">☰</router-link>
-      <router-link to="/Home">홈</router-link>
-      <router-link to="/BestSeller">베스트셀러</router-link>
-      <router-link to="/recommendedReading">추천 도서</router-link>
-      <router-link to="/NewBooks">신간</router-link>
-      <router-link to="/bookInformation">책정보</router-link>
+      <router-link to="/Category" id="category">☰</router-link> /
+      <router-link to="/NewBooks">신간</router-link> /
+      <router-link to="/recommendedReading">추천 도서</router-link> /
+      <router-link to="/BookLocation">위치찾기</router-link> /
+      <router-link to="/bookCommunity">커뮤니티</router-link> /
+      <router-link to="/bookInformation">책정보</router-link> /
     </nav>
     <router-view />
   </div>
 </template>
-
-<style>
+<script></script>
+<style scoped>
 #app {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -54,9 +56,7 @@ nav a:hover {
   margin-bottom: 30px;
   border-radius: 8px;
 }
-
-.router-link-exact-active {
-  background-color: #acacac;
-  color: #ffffff;
+#category{
+  font-size: 1.2em;
 }
 </style>
