@@ -8,6 +8,6 @@
   #container {
     width: 100%;
     height: 100%;
-    background-color: rgb(50, 136, 248);
+    background-color: black;
   }
 </style>

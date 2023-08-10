@@ -8,8 +8,6 @@
   article {
   padding: 25px;
   border: 2px solid green;
-  background-color: antiquewhite;
-  display: grid;
-  grid-template-columns: 1fr;
+  background-color: rgb(202, 138, 53);
 }
 </style>
