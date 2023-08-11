@@ -71,11 +71,6 @@ export default {
       error_msg: '',
       price_link: '',
       img_src: './no_img.png'
-      // title: '실시간 모니터링 시스템을 만들며 정복하는 MEVN',
-      // author: '주홍철 지음',
-      // price: '32000',
-      // publisher: 'BJpublic(비제이퍼블릭)',
-      // publis_date: '20211018'
     }
   },
   methods: {
