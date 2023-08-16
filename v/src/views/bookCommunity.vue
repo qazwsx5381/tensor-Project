@@ -12,43 +12,37 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in tableData" :key="index">
-            <td>{{ index + 1 }}</td>
-            <td>{{ item.nickname }}</td>
-            <td>{{ item.content }}</td>
-            <td>{{ item.views }}</td>
-            <td>{{ item.date }}</td>
-          </tr>
-        </tbody>
+        <tr v-for="(memo, index) in memos" :key="index">
+          <td>{{ memo.nickname }}</td>
+          <td>{{ memo.date }}</td>
+          <td>{{ memo.title }}</td>
+          <td>{{ memo.content }}</td>
+        </tr>
+      </tbody>
       </table>
     </div>
+    <router-link to="Memo" id="link">
     <button id="button">글쓰기</button>
+    </router-link>
   </section>
 </template>
-
 <script>
+import Memo from './Memo.vue'
 export default {
+  name: 'bookCommutation',
+  props: {
+    memos: Array
+  },
   data() {
     return {
-      tableData: [
-        {
-          nickname: '1',
-          content: '안녕',
-          views: 10,
-          date: '2023-08-10'
-        },
-        {
-          nickname: '2',
-          content: '반갑',
-          views: 15,
-          date: '2023-08-11'
-        }
-      ]
     }
-  }
+  },
+  views: {
+    Memo
+  },
+  methods: {}
 }
 </script>
-
 <style scoped>
 #container {
   width: 100%;
@@ -67,6 +61,14 @@ export default {
   font-size: 15px;
   font-weight: bold;
   margin-top: 10px;
+  position: relative;
+  left: 350px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+#button:hover {
+  background-color: #dfdfdf;
+  color: #fff;
 }
 
 #table {

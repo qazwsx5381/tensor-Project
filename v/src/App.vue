@@ -1,8 +1,12 @@
 <template>
   <div id="app">
     <router-link to="/" id="link">
-    <img id="logo" src="./assets/북로고.png" alt="Logo" />
-  </router-link>
+      <img id="logo" src="./assets/북로고.png" alt="Logo" />
+    </router-link>
+    <div id="buttoncontainer">
+      <button id="login">Login</button>
+      <button>Sign</button>
+    </div>
     <nav>
       <router-link to="/NewBooks">신간</router-link> /
       <router-link to="/recommendedReading">추천 도서</router-link> /
@@ -17,6 +21,8 @@
 </script>
 <style scoped>
 #app {
+  display: flex;
+  flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -51,9 +57,34 @@ nav a:hover {
 }
 
 #logo {
-  width: 250px;
+  width: 350px;
   height: 100px;
   margin-bottom: 30px;
   border-radius: 8px;
+}
+
+#buttoncontainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  width: 100px;
+  height: 30px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 2px;
+  position: relative;
+  right: 250px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #dfdfdf;
+  color: #fff;
 }
 </style>

@@ -1,13 +1,9 @@
 <template>
   <section>
-  <div id="container">11</div>
+    <h3>검색하고 싶은 책을 입력해주세요.</h3>
+  <div id="container"></div>
   </section>
 </template>
 <script></script>
 <style scoped>
-  #container {
-    width: 100%;
-    height: 100%;
-    background-color: rgb(133, 62, 62);
-  }
 </style>
