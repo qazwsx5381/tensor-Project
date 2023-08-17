@@ -13,4 +13,5 @@ mongoose
   .then(() => console.log('connection succesful'))
   .catch((err) => console.error(err))
 const mycol = require('./schema.js')
-module.exports = mycol
+const myboard = require('./schemaBoard.js')
+module.exports = { mycol, myboard }

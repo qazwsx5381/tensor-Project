@@ -7,7 +7,7 @@ const cheerio = require('cheerio')
 const app = express()
 const request = require('request')
 const axios = require('axios')
-const mycol = require('./mongo_ori')
+const { mycol, myboard } = require('./mongo_setting')
 const cookieParser = require('cookie-parser')
 const CryptoJS = require('crypto-js')
 
@@ -21,6 +21,9 @@ app.use('/', express.static(_path))
 /* 로그 정보(최소화 해서 표현) */
 app.use(logger('tiny'))
 app.use(cookieParser())
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 app.post('/about', (req, response) => {
   const book_isbn = req.body.scandata
@@ -65,11 +68,12 @@ app.post('/', (req, response) => {
   // 로그인(쿠키생성)
   else if (data.pw && data.id) {
     login(data).then((res) => {
-      // console.log(res[0].pw, data.pw)
+      if (res[0] === undefined) {
+        return response.send('error')
+      }
       const pw = CryptoJS.AES.decrypt(res[0].pw, res[0].id)
       const pw_1 = pw.toString(CryptoJS.enc.Utf8)
-      console.log(pw_1)
-      if (res[0] === undefined || data.pw != pw_1) {
+      if (data.pw != pw_1) {
         response.send('error')
       } else {
         response.cookie(res[0].id, res[0].name, {
@@ -186,6 +190,169 @@ async function logout(event) {
     console.error
   }
 }
+// 게시글 저장
+async function board_save(event, count) {
+  try {
+    const _data = {
+      id: event.id,
+      name: event.name,
+      title: event.title,
+      content: event.content,
+      date: event.date,
+      edit_date: event.edit_date ? event.edit_date : '',
+      load_count: 0,
+      boardnum: count
+    }
+    const board = new myboard(_data)
+    await board.save()
+  } catch (error) {
+    console.error
+  }
+}
+
+// 게시글 조회
+async function board_load() {
+  try {
+    const t = await myboard
+      .find({}, { _id: 0, __v: 0 })
+      .sort({ date: -1 })
+      .lean() // p349 설명 효율적 메소드
+    return t
+  } catch (error) {
+    console.error
+  }
+}
+// 게시글 검색
+async function load(e) {
+  try {
+    const t = await myboard
+      .find({ id: e.id, name: e.name, date: e.date }, { _id: 0, __v: 0 })
+      .lean() // p349 설명 효율적 메소드
+    return t
+  } catch (error) {
+    console.error
+  }
+}
+// 게시물 조회수 저장
+async function loadContent(event) {
+  try {
+    const t = await load(event)
+    const number = t[0].load_count + 1
+    await myboard.updateOne(
+      { id: event.id, name: event.name, date: event.date },
+      { $set: { load_count: number } }
+    )
+    const t_1 = await myboard
+      .find(
+        { id: event.id, name: event.name, date: event.date },
+        { _id: 0, __v: 0 }
+      )
+      .lean() // p349 설명 효율적 메소드
+    return t_1
+  } catch (error) {
+    console.error
+  }
+}
+// 게시글 끝번호 조회
+async function loadCount() {
+  try {
+    const t = await myboard.find({}, { _id: 0, __v: 0 }).lean() // p349 설명 효율적 메소드
+    return t
+  } catch (error) {
+    console.error
+  }
+}
+let count = ''
+app.post('/board', async (req, res) => {
+  const data = req.body
+  const boardNum = await loadCount()
+  if (boardNum.length === 0) {
+    count = 1
+  } else if (boardNum.length >= boardNum[boardNum.length - 1].boardnum) {
+    count = boardNum.length + 1
+  } else {
+    count = boardNum[boardNum.length - 1].boardnum + 1
+  }
+  await board_save(data, count).then(() => {
+    res.send('succese')
+  })
+})
+// 게시글 삭제
+async function delContent(event) {
+  try {
+    await myboard.findOneAndDelete({ boardnum: event })
+    const t_1 = await myboard
+      .find(
+        { id: event.id, name: event.name, date: event.date },
+        { _id: 0, __v: 0 }
+      )
+      .lean() // p349 설명 효율적 메소드
+    return t_1
+  } catch (error) {
+    console.error
+  }
+}
+// 게시글 수정
+async function editContent(event) {
+  try {
+    await myboard.findOneAndUpdate(
+      { boardnum: event.boardnum },
+      {
+        $set: {
+          title: event.title,
+          content: event.content
+        }
+      }
+    )
+    const t_1 = await myboard
+      .find({ boardnum: event.boardnum }, { _id: 0, __v: 0 })
+      .lean() // p349 설명 효율적 메소드
+    return t_1
+  } catch (error) {
+    console.error
+  }
+}
+
+async function editDB(event) {
+  try {
+    const t_1 = await myboard
+      .find({ boardnum: event }, { _id: 0, __v: 0 })
+      .lean() // p349 설명 효율적 메소드
+    return t_1
+  } catch (error) {
+    console.error
+  }
+}
+app.post('/board_load', (req, res) => {
+  board_load().then((data) => {
+    res.send(data)
+  })
+})
+
+app.post('/load_content', async (req, res) => {
+  const data = req.body
+  const count = await loadContent(data)
+  res.send(count)
+})
+app.post('/delete', async (req, res) => {
+  const data = req.body
+  console.log(data)
+  await delContent(data.count)
+  res.send('del')
+})
+
+app.post('/edit', async (req, res) => {
+  const data = req.body
+  const send = await editDB(data.boardnum)
+  res.send(send)
+})
+
+app.post('/editBoard', async (req, res) => {
+  const data = req.body
+  console.log(data)
+  const send = await editContent(data)
+  res.send(send)
+})
 
 app.listen(3000, () => {
   console.log('서버 open')

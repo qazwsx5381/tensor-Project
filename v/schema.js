@@ -8,5 +8,4 @@ const schema = new Schema({
   mail: String
 })
 
-// module.exports = mongoose.model('photo', PhotoSchema)
 module.exports = mongoose.model('login_info', schema, 'login_info')

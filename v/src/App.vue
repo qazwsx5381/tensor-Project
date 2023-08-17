@@ -1,98 +1,102 @@
 <template>
-  <!-- 로그인 및 회원가입 버튼 -->
-  <div v-if="login_info">
-    <button
-      @click=";[(login = true), ((signup = false), (login_info = false))]"
-    >
-      로그인
-    </button>
-    <button @click=";[(signup = true), (login = false), (login_info = false)]">
-      회원가입
-    </button>
-  </div>
-  <!-- 로그인 성공시 -->
-  <div v-if="login_suc">
-    <div id="login_text">{{ login_name }}</div>
-    <button @click="logout()">로그아웃</button>
-  </div>
-  <!-- 로그인 -->
-  <div v-if="login">
-    <div id="login_id">
-      <span>아이디</span><input type="text" v-model="login_id" />
+  <div id="app">
+    <!-- 로그인 및 회원가입 버튼 -->
+    <div v-if="login_info">
+      <button
+        @click=";[(login = true), ((signup = false), (login_info = false))]"
+      >
+        로그인
+      </button>
+      <button
+        @click=";[(signup = true), (login = false), (login_info = false)]"
+      >
+        회원가입
+      </button>
     </div>
-    <div id="login_pw">
-      <span>비밀번호</span><input type="password" v-model="login_pw" />
+    <!-- 로그인 성공시 -->
+    <div v-if="login_suc">
+      <div id="login_text">{{ login_name }}</div>
+      <button @click="logout()">로그아웃</button>
     </div>
-    <div id="login_btn">
-      <button @click="loginInfo()">로그인</button
-      ><button @click=";[(login = false), (signup = true)]">회원가입</button>
+    <!-- 로그인 -->
+    <div v-if="login">
+      <div id="login_id">
+        <span>아이디</span><input type="text" v-model="login_id" />
+      </div>
+      <div id="login_pw">
+        <span>비밀번호</span><input type="password" v-model="login_pw" />
+      </div>
+      <div id="login_btn">
+        <button @click="loginInfo()">로그인</button
+        ><button @click=";[(login = false), (signup = true)]">회원가입</button>
+        <button
+          @click=";[(login = false), (signup = false), (login_info = true)]"
+        >
+          닫기
+        </button>
+      </div>
+    </div>
+    <!-- 회원가입 -->
+    <div v-if="signup">
+      <div>
+        아이디<input type="text" v-model="input_id" @keyup="check_id()" />
+      </div>
+      <div id="checkFailedId" v-if="check_failed">
+        <small>{{ checkid }}</small>
+      </div>
+      <div id="checkSucceseId" v-if="check_succese">
+        <small>{{ checkId }}</small>
+      </div>
+      <div>
+        비밀번호<input
+          :type="view === true ? 'password' : 'text'"
+          v-model="input_pw"
+        /><button @click="view_pw">
+          <img
+            src="./views/eye_off.svg"
+            alt=""
+            v-if="!view"
+            title="비밀번호 숨기기"
+          /><img
+            src="./views/eye_on.svg"
+            alt=""
+            title="비밀번호 보기"
+            v-if="view"
+          />
+        </button>
+      </div>
+      <div>이름<input type="text" v-model="input_name" /></div>
+      <div>e-mail<input type="text" v-model="input_mail" /></div>
+      <button
+        v-if="
+          input_id != '' &&
+          check_succese === true &&
+          input_pw != '' &&
+          input_name != '' &&
+          input_mail != ''
+        "
+        @click=";[submit(), (signup = false), (login = true)]"
+      >
+        제출
+      </button>
+      <button @click=";[(signup = false), (login = true)]">뒤로가기</button>
       <button
         @click=";[(login = false), (signup = false), (login_info = true)]"
       >
         닫기
       </button>
     </div>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/login">login</router-link>
+    </nav>
+    <router-view />
   </div>
-  <!-- 회원가입 -->
-  <div v-if="signup">
-    <div>
-      아이디<input type="text" v-model="input_id" @keyup="check_id()" />
-    </div>
-    <div id="checkFailedId" v-if="check_failed">
-      <small>{{ checkid }}</small>
-    </div>
-    <div id="checkSucceseId" v-if="check_succese">
-      <small>{{ checkId }}</small>
-    </div>
-    <div>
-      비밀번호<input
-        :type="view === true ? 'password' : 'text'"
-        v-model="input_pw"
-      /><button @click="view_pw">
-        <img
-          src="./eye_off.svg"
-          alt=""
-          v-if="!view"
-          title="비밀번호 숨기기"
-        /><img src="./eye_on.svg" alt="" title="비밀번호 보기" v-if="view" />
-      </button>
-    </div>
-    <div>이름<input type="text" v-model="input_name" /></div>
-    <div>e-mail<input type="text" v-model="input_mail" /></div>
-    <button
-      v-if="
-        input_id != '' &&
-        check_succese === true &&
-        input_pw != '' &&
-        input_name != '' &&
-        input_mail != ''
-      "
-      @click=";[submit(), (signup = false), (login = true)]"
-    >
-      제출
-    </button>
-    <button @click=";[(signup = false), (login = true)]">뒤로가기</button>
-    <button @click=";[(login = false), (signup = false), (login_info = true)]">
-      닫기
-    </button>
-  </div>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/login">login</router-link>
-  </nav>
-  <div style="display: none">
-    <loginView :message="String(loginSucceseID)" />
-  </div>
-  <router-view />
 </template>
 <script>
 import axios from 'axios'
-import loginView from './views/loginView.vue'
 export default {
-  components: {
-    loginView
-  },
   data() {
     return {
       login: false,
@@ -113,6 +117,9 @@ export default {
       checkId: '',
       loginSucceseID: ''
     }
+  },
+  mounted() {
+    this.cookie_check()
   },
   methods: {
     // 아이디 중복체크
@@ -170,7 +177,7 @@ export default {
         })
         .then((res) => {
           if (res.data === 'error') {
-            alert('id 혹은 비밀번호가 잘못 되었습니다. 다시 로그인해주세요.')
+            alert('ID 혹은 비밀번호가 잘못 되었습니다. 다시 로그인해주세요.')
           } else {
             const rec = res.data
             alert(`${rec.name}(${rec.id})님 반갑습니다.`)
@@ -194,6 +201,20 @@ export default {
           this.loginSucceseID = ''
         }
       })
+    },
+    // cookie 체크
+    cookie_check() {
+      if (document.cookie) {
+        const cookie = document.cookie.split('=')
+        this.login_suc = true
+        this.login_info = false
+        this.login = false
+        this.loginSucceseID = cookie[0]
+        console.log(this.loginSucceseID)
+        this.login_name = `${decodeURIComponent(cookie[1])}(${
+          cookie[0]
+        })님 반갑습니다.`
+      }
     }
   }
 }
