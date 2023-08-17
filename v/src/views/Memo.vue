@@ -15,11 +15,11 @@
         rows="10"
         placeholder="내용"
       ></textarea>
-    </div>
-    <div id="buttonContainer">
-      <button id="button" @click="routerLink()">글목록</button><br />
-      <button id="ok" @click="addMemo()">등록</button>
-      <button id="delete" @click="routerLink()">취소</button>
+      <div id="buttonContainer">
+        <button id="button" @click="routerLink()">글목록</button><br />
+        <button id="ok" @click="addMemo()">등록</button>
+        <button id="delete" @click="routerLink()">취소</button>
+      </div>
     </div>
   </div>
 </template>
@@ -70,23 +70,26 @@ input {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
+  font-family: 'omyu_pretty';
 }
 
 #title {
-  width: 800px;
+  width: 600px;
   height: 30px;
-  align-self: center;
+  font-family: 'omyu_pretty';
 }
 
 #textarea {
-  width: 800px;
-  align-self: center;
+  width: 600px;
+  height: 300px;
   resize: none;
+  font-family: 'omyu_pretty';
 }
 
 #button {
   position: relative;
-  right: 350px;
+  right: 250px;
 }
 
 button {
@@ -97,23 +100,15 @@ button {
   background-color: black;
   color: white;
   font-size: 15px;
-  font-weight: bold;
   margin-top: 10px;
   margin: 5px;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  font-family: 'omyu_pretty';
+  font-size: 17px;
 }
 
 button:hover {
   background-color: #dfdfdf;
-  color: #fff;
-}
-
-#img-box {
-  display: inline-block;
-  width: 35px;
-  height: 35px;
-  border: 1px solid #8388e1;
-  border-radius: 5px;
-  margin-top: 4px;
+  color: black;
 }
 </style>

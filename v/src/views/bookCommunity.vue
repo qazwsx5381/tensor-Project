@@ -46,7 +46,7 @@ export default {
 <style scoped>
 #container {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,16 +59,16 @@ export default {
   background-color: black;
   color: white;
   font-size: 15px;
-  font-weight: bold;
   margin-top: 10px;
   position: relative;
   left: 350px;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  font-family: 'omyu_pretty';
 }
 
 #button:hover {
   background-color: #dfdfdf;
-  color: #fff;
+  color: black;
 }
 
 #table {
