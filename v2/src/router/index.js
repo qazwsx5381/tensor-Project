@@ -1,19 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
-  },
-  {
-    path: '/Category',
-    name: 'Category',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/Category.vue')
   },
   {
     path: '/BookLocation',
@@ -26,7 +18,7 @@ const routes = [
   },
   {
     path: '/recommendedReading',
-    name: 'recommended reading',
+    name: 'recommendedReading',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -61,12 +53,13 @@ const routes = [
       import(/* webpackChunkName: "about" */ '../views/bookInformation.vue')
   },
   {
-    path: '/Memo',
-    name: 'Memo',
+    path: '/Category',
+    name: 'Category',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Memo.vue')
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/Category.vue')
   }
 ]
 
