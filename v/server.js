@@ -233,6 +233,16 @@ async function load(e) {
     console.error
   }
 }
+// 게시글 검색(글 번호로)
+async function loadNum(e) {
+  try {
+    const t = await myboard.find({ boardnum: e }, { _id: 0, __v: 0 }).lean() // p349 설명 효율적 메소드
+    return t
+  } catch (error) {
+    console.error
+  }
+}
+
 // 게시물 조회수 저장
 async function loadContent(event) {
   try {
@@ -349,8 +359,13 @@ app.post('/edit', async (req, res) => {
 
 app.post('/editBoard', async (req, res) => {
   const data = req.body
-  console.log(data)
   const send = await editContent(data)
+  res.send(send)
+})
+
+app.post('/editcancel', async (req, res) => {
+  const data = req.body.count
+  const send = await loadNum(data)
   res.send(send)
 })
 

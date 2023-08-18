@@ -1,30 +1,20 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div>
+    <Content />
+    <Header />
+    <Footer />
   </div>
 </template>
-
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import Content from '../components/Content.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 export default {
-  name: 'HomeView',
   components: {
-    HelloWorld
-  },
-  data() {
-    return {
-      test: false
-    }
-  },
-  methods: {
-    turnon_off() {
-      setInterval(() => {
-        this.test = true
-      }, 1000)
-    }
+    Content,
+    Header,
+    Footer
   }
 }
 </script>
+<style></style>

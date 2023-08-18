@@ -1,11 +1,19 @@
 <template>
-  <div>
+  <div id="cam">
     <h1>Barcode Scanner</h1>
     <button @click="startScanner()">
       <img src="./icon.svg" alt="코드 아이콘" />
     </button>
     <div>
       <div id="scanner"></div>
+      <button v-if="close_cam" class="image" @click="closeScan()">
+        <img
+          id="log_close_btn"
+          src="../assets/close.svg"
+          alt="닫기"
+          title="닫기"
+        />
+      </button>
     </div>
     <div id="error" v-if="error">
       <div>{{ error_msg }}</div>
@@ -63,6 +71,7 @@ export default {
       control: false,
       test: false,
       error: false,
+      close_cam: false,
       title: '',
       author: '',
       price: '',
@@ -103,10 +112,11 @@ export default {
         (err) => {
           if (err) {
             console.error('Error initializing Quagga:', err)
-            return
+            this.closeScan()
+            return alert('카메라가 인식되지 않았습니다.')
           }
           console.log('Quagga initialization succeeded!')
-
+          this.close_cam = true
           Quagga.start()
           Quagga.onDetected(this.onBarcodeDetected)
         }
@@ -151,11 +161,29 @@ export default {
             }
           }
         })
+    },
+    closeScan() {
+      const scan = document.getElementById('scanner')
+      scan.style.width = '0'
+      scan.style.height = '0'
+      scan.innerHTML = ''
+      this.close_cam = false
     }
   }
 }
 </script>
 <style scoped>
+#cam {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #444;
+  font-family: 'omyu_pretty';
+  font-size: 20px;
+}
 button {
   border: none;
 }
@@ -193,5 +221,11 @@ button {
   width: 70%;
   margin: 5px 0;
   vertical-align: middle;
+}
+
+img#log_close_btn {
+  position: absolute;
+  right: 12rem;
+  bottom: 385px;
 }
 </style>

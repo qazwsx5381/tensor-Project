@@ -8,26 +8,66 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/about',
-    name: 'about',
+    path: '/Category',
+    name: 'Category',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(
-        /* webpackChunkName: "about",webpackPrefetch:true */ '../views/AboutView.vue'
-      )
+      import(/* webpackChunkName: "about" */ '../views/Category.vue')
   },
   {
-    path: '/login',
-    name: 'login',
+    path: '/BookLocation',
+    name: 'BookLocation',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(
-        /* webpackChunkName: "login",webpackPrefetch:true */ '../views/loginView.vue'
-      )
+      import(/* webpackChunkName: "about" */ '../views/BookLocation.vue')
+  },
+  {
+    path: '/recommendedReading',
+    name: 'recommended reading',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/recommendedReading.vue')
+  },
+  {
+    path: '/NewBooks',
+    name: 'NewBooks',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/NewBooks.vue')
+  },
+  {
+    path: '/bookCommunity',
+    name: 'bookCommunity',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/bookCommunity.vue')
+  },
+  {
+    path: '/bookInformation',
+    name: 'bookInformation',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/bookInformation.vue')
+  },
+  {
+    path: '/Memo',
+    name: 'Memo',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Memo.vue')
   }
 ]
 
