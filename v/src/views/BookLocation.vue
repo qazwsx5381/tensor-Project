@@ -12,7 +12,81 @@
     </div>
   </section>
 </template>
-<script></script>
+<script>
+export default {
+  mounted() {
+    // const gpsx = 35.195569
+    // const gpsy = 129.075102
+    const mapContainer = document.getElementById('map')
+    const script = document.createElement('script')
+    script.src =
+      'https://dapi.kakao.com/v2/maps/sdk.js?appkey=cb00c7966b9e945687b4ffee1da8ea51&autoload=false'
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        // const location = 'http://api.kcisa.kr/API_CNV_045/request'
+        const mapOptions = {
+          center: new window.kakao.maps.LatLng(location),
+          level: 4
+        }
+
+        const map = new window.kakao.maps.Map(mapContainer, mapOptions)
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude
+            const lon = position.coords.longitude
+            const locPosition = new window.kakao.maps.LatLng(lat, lon)
+            const message = '<div>여기가 현재위치</div>'
+            this.displayMarker(map, locPosition, message)
+          })
+        } else {
+          alert(
+            '이 문장은 사용상의 웹 브라우저가 Geolocation API를 지원하지 않을 때 나타납니다.'
+          )
+        }
+      })
+    }
+
+    document.body.appendChild(script)
+  },
+
+  methods: {
+    displayMarker(map, locPosition, message) {
+      const marker = new window.kakao.maps.Marker({
+        map: map,
+        position: locPosition
+      })
+
+      const iwContent = message
+      const iwRemovable = true
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: iwContent,
+        removable: iwRemovable
+      })
+
+      infowindow.open(map, marker)
+      map.setCenter(locPosition)
+    }
+  }
+}
+</script>
+<style scoped>
+#container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#map {
+  width: 900px;
+  height: 500px;
+  border: 1px solid black;
+}
+</style>
+위 코드에서 수정한 내용은 다음과 같습니다:
 <style scoped>
 #container {
   width: 100%;

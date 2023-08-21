@@ -13,11 +13,11 @@
       </button>
     </div>
     <nav>
-      <router-link to="/Category">☰</router-link> /
-      <router-link to="/NewBooks">신간</router-link> /
-      <router-link to="/recommendedReading">추천 도서</router-link> /
-      <router-link to="/BookLocation">위치찾기</router-link> /
-      <router-link to="/bookCommunity">커뮤니티</router-link> /
+      <router-link to="/Category">☰</router-link> |
+      <router-link to="/NewBooks">신간</router-link> |
+      <router-link to="/recommendedReading">추천 도서</router-link> |
+      <router-link to="/BookLocation">위치찾기</router-link> |
+      <router-link to="/bookCommunity">커뮤니티</router-link> |
       <router-link to="/bookInformation">책정보</router-link>
     </nav>
     <router-view />
