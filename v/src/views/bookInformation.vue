@@ -2,12 +2,18 @@
   <div id="cam">
     <h1>Barcode Scanner</h1>
     <button class="barcode_btn" @click="startScanner()" v-if="show_btn">
-      <img id="barcode_btn" src="./icon.svg" alt="코드 아이콘" />
+      <img
+        id="barcode_btn"
+        src="./icon.svg"
+        alt="코드 아이콘"
+        v-if="show_btn"
+      />
     </button>
     <div>
       <div id="scanner"></div>
       <button v-if="close_cam" class="image" @click="closeScan()">
         <img
+          v-if="close_cam"
           id="log_close_btn"
           src="../assets/close.svg"
           alt="닫기"
@@ -124,7 +130,8 @@ export default {
       scan.style.width = '0'
       scan.style.height = '0'
       scan.innerHTML = ''
-      this.show_btn = false
+      this.show_btn = true
+      this.close_cam = false
       Quagga.stop()
     },
     onBarcodeDetected(result) {
@@ -143,6 +150,7 @@ export default {
             this.error_msg = '도서 바코드가 아닙니다. 다시 인식해주세요!'
           } else {
             this.test = true
+            this.show_btn = true
             const data = JSON.parse(res.request.response)
             this.title = data.bookname
             this.author = data.author
@@ -165,8 +173,8 @@ export default {
       scan.style.width = '0'
       scan.style.height = '0'
       scan.innerHTML = ''
-      this.close_cam = false
       this.show_btn = true
+      this.close_cam = false
     },
     videoPosition() {
       const video = document.querySelector('div#scanner video')
@@ -236,6 +244,11 @@ img#log_close_btn {
   position: relative;
   left: 285px;
   top: -475px;
+  background-color: white;
+  border: 5px outset #d1d1d1cc;
+}
+img#log_close_btn:hover {
+  border: 5px inset #d1d1d1cc;
 }
 
 button.barcode_btn {
