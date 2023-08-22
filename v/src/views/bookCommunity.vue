@@ -404,14 +404,12 @@ span.text {
   background-color: #979797;
   color: black;
 }
-
 #table {
   border-collapse: collapse;
   width: 80%;
   max-width: 800px;
   background-color: white;
 }
-
 th {
   border-top: 1px double black;
   border-bottom: 1px double black;

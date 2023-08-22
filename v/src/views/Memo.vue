@@ -29,7 +29,6 @@
 <script>
 import bookCommunity from './bookCommunity.vue'
 import axios from 'axios'
-
 export default {
   views: {
     bookCommunity
@@ -77,6 +76,17 @@ export default {
 }
 </script>
 <style scoped>
+#container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+input {
+  margin: 5px;
+}
 #memoContainer {
   display: flex;
   justify-content: center;
@@ -84,7 +94,6 @@ export default {
   align-items: center;
   font-family: 'omyu_pretty';
 }
-
 #memoContainer div {
   display: flex;
 }
@@ -125,6 +134,8 @@ span.text {
   outline-style: none;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
+  resize: none;
+  font-family: 'omyu_pretty';
 }
 
 #button {
