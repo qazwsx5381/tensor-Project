@@ -13,6 +13,7 @@
   </section>
 </template>
 <script>
+// require('dovenv').config()
 export default {
   mounted() {
     // const gpsx = 35.195569
@@ -20,12 +21,14 @@ export default {
     const mapContainer = document.getElementById('map')
     const script = document.createElement('script')
     script.src =
-      'https://dapi.kakao.com/v2/maps/sdk.js?appkey=cb00c7966b9e945687b4ffee1da8ea51&autoload=false'
+      // 'http://api.kcisa.kr/API_CNV_045/request?serviceKey=ca5c055a-8dc5-4788-8049-31ca2e238cd3'
+      // 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=cb00c7966b9e945687b4ffee1da8ea51&autoload=false'
+      'https://dapi.kakao.com/v2/maps/sdk.js?appkey=cb00c7966b9e945687b4ffee1da8ea51&libraries=services'
     script.onload = () => {
       window.kakao.maps.load(() => {
         // const location = 'http://api.kcisa.kr/API_CNV_045/request'
         const mapOptions = {
-          center: new window.kakao.maps.LatLng(location),
+          center: new window.kakao.maps.LatLng(35.195569, 129.075102), // 지도의 중심
           level: 4
         }
 
@@ -33,8 +36,8 @@ export default {
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((position) => {
-            const lat = position.coords.latitude
-            const lon = position.coords.longitude
+            const lat = 35.195569 // position.coords.latitude // 마커위치
+            const lon = 129.075102 // position.coords.longitude // 마커위치
             const locPosition = new window.kakao.maps.LatLng(lat, lon)
             const message = '<div>여기가 현재위치</div>'
             this.displayMarker(map, locPosition, message)
@@ -56,7 +59,6 @@ export default {
         map: map,
         position: locPosition
       })
-
       const iwContent = message
       const iwRemovable = true
       const infowindow = new window.kakao.maps.InfoWindow({
