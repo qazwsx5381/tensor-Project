@@ -287,6 +287,7 @@ export default {
           this.login_info = true
           this.login_suc = false
           this.loginSucceseID = ''
+          this.$router.go(0)
         }
       })
     },
@@ -432,6 +433,7 @@ nav a:hover {
 #buttoncontainer {
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 10px;
 }
 
 button {
@@ -470,6 +472,7 @@ div#succese_login {
   align-items: end;
   width: 98%;
   flex-direction: column;
+  margin-bottom: 10px;
 }
 
 div#succese_login div {

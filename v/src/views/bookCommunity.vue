@@ -16,12 +16,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(v, i) in displayedPosts" :key="i">
-                <td>{{ v.boardnum }}</td>
+              <tr class="viewContent" v-for="(v, i) in displayedPosts" :key="i">
+                <td @click="showBoard(i)">{{ v.boardnum }}</td>
                 <td @click="showBoard(i)">{{ v.title }}</td>
-                <td>{{ decodeURI(v.name) }}({{ v.id }})</td>
-                <td>{{ v.load_count }}</td>
-                <td>{{ timestamp(v.date) }}</td>
+                <td @click="showBoard(i)">
+                  {{ decodeURI(v.name) }}({{ v.id }})
+                </td>
+                <td @click="showBoard(i)">{{ v.load_count }}</td>
+                <td @click="showBoard(i)">{{ timestamp(v.date) }}</td>
               </tr>
             </tbody>
           </table>
@@ -48,12 +50,32 @@
       </div>
       <!-- 게시글 조회 -->
       <div v-if="load_dbContent && login_id">
-        <div>{{ boardNum }}</div>
-        <div>{{ title_board }}</div>
-        <div>{{ content_board }}</div>
-        <div>{{ writeDate }}</div>
-        <div>{{ writeID }}</div>
-        <div>{{ boardCount }}</div>
+        <div class="S_content">
+          <div class="Scontent">
+            <span class="Fix_content">글번호</span
+            ><span class="EditContent">{{ boardNum }}</span>
+          </div>
+          <div class="Scontent">
+            <span class="Fix_content">제목</span
+            ><span class="EditContent">{{ title_board }}</span>
+          </div>
+          <div class="Scontent">
+            <span class="Fix_content">내용</span
+            ><span class="EditContent">{{ content_board }}</span>
+          </div>
+          <div class="Scontent">
+            <span class="Fix_content">작성자</span
+            ><span class="EditContent">{{ writeID }}</span>
+          </div>
+          <div class="Scontent">
+            <span class="Fix_content">작성일자</span
+            ><span class="EditContent">{{ writeDate }}</span>
+          </div>
+          <div class="Scontent">
+            <span class="Fix_content">조회수</span
+            ><span class="EditContent">{{ boardCount }}</span>
+          </div>
+        </div>
         <button id="pre_button" @click="loadContent()">목록</button>
         <button
           id="pre_button"
@@ -390,10 +412,74 @@ span.text {
   background-color: white;
 }
 
-th,
-td {
-  border: 1px solid black;
+th {
+  border-top: 1px double black;
+  border-bottom: 1px double black;
+  border-width: 3px;
   padding: 8px;
   text-align: center;
+}
+td {
+  border-bottom: 1px solid black;
+  padding: 8px;
+  text-align: center;
+}
+
+div.S_content {
+  margin-bottom: 10px;
+}
+div.Scontent {
+  display: flex;
+  align-items: center;
+  background-color: rgba(83, 116, 112, 0.452);
+  min-width: 400px;
+  width: 60%;
+  margin: auto;
+}
+div.Scontent:nth-child(3) span.Fix_content,
+div.Scontent:nth-child(3) span.EditContent {
+  height: 200px;
+}
+span.Fix_content {
+  width: 100px;
+  height: 26px;
+  margin: 5px;
+  padding: 5px 0;
+  border-right: 2px solid white;
+  color: white;
+  margin-right: 0;
+}
+span.EditContent {
+  width: 400px;
+  height: 26px;
+  text-align: left;
+  margin: 5px;
+  margin-left: 0;
+  padding: 10px;
+  color: white;
+}
+
+tr th:first-child {
+  width: 5%;
+  height: 44px;
+}
+tr th:nth-child(2) {
+  width: 50%;
+  height: 44px;
+}
+tr th:nth-child(3) {
+  width: 20%;
+  height: 44px;
+}
+tr th:nth-child(4) {
+  width: 10%;
+  height: 44px;
+}
+tr th:nth-child(5) {
+  width: 15%;
+  height: 44px;
+}
+tr.viewContent:hover {
+  background-color: #d3d3d39d;
 }
 </style>

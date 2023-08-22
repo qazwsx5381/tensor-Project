@@ -1,8 +1,8 @@
 <template>
   <div id="cam">
     <h1>Barcode Scanner</h1>
-    <button @click="startScanner()">
-      <img src="./icon.svg" alt="코드 아이콘" />
+    <button class="barcode_btn" @click="startScanner()" v-if="show_btn">
+      <img id="barcode_btn" src="./icon.svg" alt="코드 아이콘" />
     </button>
     <div>
       <div id="scanner"></div>
@@ -14,9 +14,6 @@
           title="닫기"
         />
       </button>
-    </div>
-    <div id="error" v-if="error">
-      <div>{{ error_msg }}</div>
     </div>
     <div id="result" v-if="test">
       <img
@@ -70,7 +67,7 @@ export default {
     return {
       control: false,
       test: false,
-      error: false,
+      show_btn: true,
       close_cam: false,
       title: '',
       author: '',
@@ -85,10 +82,10 @@ export default {
   methods: {
     startScanner() {
       this.test = false
-      this.error = false
+      this.show_btn = false
       const scan = document.getElementById('scanner')
       scan.style.width = '100%'
-      scan.style.height = '500px'
+      scan.style.height = '480px'
       Quagga.init(
         {
           inputStream: {
@@ -115,8 +112,8 @@ export default {
             this.closeScan()
             return alert('카메라가 인식되지 않았습니다.')
           }
+          this.videoPosition()
           console.log('Quagga initialization succeeded!')
-          this.close_cam = true
           Quagga.start()
           Quagga.onDetected(this.onBarcodeDetected)
         }
@@ -127,6 +124,7 @@ export default {
       scan.style.width = '0'
       scan.style.height = '0'
       scan.innerHTML = ''
+      this.show_btn = false
       Quagga.stop()
     },
     onBarcodeDetected(result) {
@@ -168,6 +166,12 @@ export default {
       scan.style.height = '0'
       scan.innerHTML = ''
       this.close_cam = false
+      this.show_btn = true
+    },
+    videoPosition() {
+      const video = document.querySelector('div#scanner video')
+      video.style.position = 'absolute'
+      this.close_cam = true
     }
   }
 }
@@ -186,6 +190,11 @@ export default {
 }
 button {
   border: none;
+}
+button.barcode_btn {
+  display: relative;
+  width: 48px;
+  height: 48px;
 }
 #result {
   display: flex;
@@ -224,8 +233,14 @@ button {
 }
 
 img#log_close_btn {
-  position: absolute;
-  right: 12rem;
-  bottom: 385px;
+  position: relative;
+  left: 285px;
+  top: -475px;
+}
+
+button.barcode_btn {
+  width: 60px;
+  height: 48px;
+  margin: 0 auto 10px auto;
 }
 </style>
