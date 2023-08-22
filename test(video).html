@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Barcode Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+      #result {
+        position: absolute;
+        top: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Barcode Scanner</h1>
+    <div id="scanner-container">
+      <div id="scanner" style="width: 100%; height: 300px"></div>
+      <!-- <div id="result"></div> -->
+      <input type="text" id="result" />
+    </div>
+    <script src="https://unpkg.com/quagga"></script>
+    <script>
+      // 바코드 스캐너 초기화
+      Quagga.init(
+        {
+          inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.getElementById("scanner"),
+            constraints: {
+              facingMode: "environment", // 후면 카메라 사용 (필요에 따라 조정 가능)
+            },
+          },
+          decoder: {
+            readers: [
+              "ean_reader",
+              "code_128_reader",
+              "code_39_reader",
+              "upc_reader",
+              "codabar_reader",
+            ], // 인식할 바코드 형식 설정
+          },
+        },
+        function (err) {
+          if (err) {
+            console.error("Error initializing Quagga:", err);
+            return;
+          }
+          console.log("Quagga initialization succeeded!");
+
+          // 바코드 인식 결과 처리
+          Quagga.onDetected(function (result) {
+            const code = result.codeResult.code;
+            const $result = document.getElementById("result");
+            $result.value = `인식한 바코드: ${code}`;
+            $result.addEventListener("change", (e) => {
+              console.log(e);
+            });
+          });
+
+          // 바코드 스캐너 시작
+          Quagga.start();
+        }
+      );
+    </script>
+  </body>
+</html>
