@@ -304,75 +304,6 @@ export default {
           cookie[0]
         })님 반갑습니다.`
       }
-=======
-    <router-link to="/" id="link">
-      <img id="logo" src="./assets/북로고.png" alt="Logo" />
-    </router-link>
-    <div id="buttoncontainer">
-      <button id="login" @click="openmodal()">Login</button>
-      <button
-        id="sign"
-        @click=";[(modalOpen = true), (sign_modal = true), (log_modal = false)]"
-      >
-        Sign
-      </button>
-    </div>
-    <nav>
-      <router-link to="/Category">☰</router-link> /
-      <router-link to="/NewBooks">신간</router-link> /
-      <router-link to="/recommendedReading">추천 도서</router-link> /
-      <router-link to="/BookLocation">위치찾기</router-link> /
-      <router-link to="/bookCommunity">커뮤니티</router-link> /
-      <router-link to="/bookInformation">책정보</router-link>
-    </nav>
-    <router-view />
-    <!-- 모달창 -->
-    <div id="modalcontainer" v-if="modalOpen" @click.self="closeModal">
-      <div id="modalcontent" v-if="log_modal" @click.stop>
-        <h3>Login</h3>
-        <input type="text" id="id" placeholder="ID" />
-        <input type="text" id="pw" placeholder="PW" />
-        <button @click="submitmodal">확인</button>
-        <button @click=";[(sign_modal = true), (log_modal = false)]">
-          회원가입
-        </button>
-      </div>
-      <div id="modalcontent" v-if="sign_modal">
-        <h3>Sign-up</h3>
-        <input type="text" id="id" placeholder="ID" />
-        <input type="text" id="pw" placeholder="PW" />
-        <button @click=";[(sign_modal = false), (log_modal = true)]">
-          회원가입
-        </button>
-        <button @click=";[(sign_modal = false), (log_modal = true)]">
-          로그인
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
-<script>
-export default {
-  data() {
-    return {
-      modalOpen: false,
-      log_modal: true,
-      sign_modal: false
-    }
-  },
-  methods: {
-    openmodal() {
-      this.modalOpen = true
-      this.log_modal = true
-      this.sign_modal = false
-    },
-    submitmodal() {
-      this.modalOpen = false
-      this.log_modal = false
-      this.sign_modal = false
-    },
-    closeModal() {
-      this.modalOpen = false
     }
   }
 }
@@ -397,7 +328,6 @@ export default {
   align-items: center;
   z-index: 1000;
 }
-
 
 #signcontent {
   background-color: white;
