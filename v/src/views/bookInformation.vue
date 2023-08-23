@@ -206,12 +206,12 @@ button.barcode_btn {
 }
 #result {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   margin-top: 30px;
 }
 
 #result_txt {
-  margin-right: 200px;
+  margin-left: 20px;
 }
 
 #result_title,
