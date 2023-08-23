@@ -436,6 +436,20 @@ app.post('/bestseller', (req, response) => {
   })
 })
 
+app.post('/NewBooks', (req, res) => {
+  const url = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${Alkey}&QueryType=ItemNewAll&Cover=Big&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101`
+
+  request(url, (error, response, body) => {
+    if (error) {
+      console.error('Error:', error)
+      res.status(500).json({ error: 'Internal Server Error' })
+      return
+    }
+
+    res.send(body)
+  })
+})
+
 app.listen(8080, () => {
   console.log('서버 open')
 })
