@@ -1,73 +1,143 @@
 <template>
   <section>
-    <h3>가장 가까운 서점</h3>
+    <h3>
+      가장 가까운 서점
+      <button class="location" @click="displayInfoWindow()">현재위치</button>
+    </h3>
     <div id="container">
       <div id="map">지도위치</div>
-      <p id="text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic quasi
-        libero, asperiores doloribus vel soluta, a eligendi animi pariatur ea
-        beatae! Autem exercitationem aut laborum illum eum quia totam!
-        Veritatis.
-      </p>
+      <div v-if="load_location" id="text">
+        <div v-for="(v, i) in store_location" :key="i">
+          <div class="location">
+            <div class="store_line">
+              <span class="storeContent">{{ i + 1 }}. {{ v.FCLTY_NM[0] }}</span>
+            </div>
+            <div class="store_line">
+              <span class="storeContent">{{ v.FCLTY_ROAD_NM_ADDR[0] }}</span>
+            </div>
+            <div class="store_line">
+              <span class="storeContent">{{ v.OPTN_DC[0] }}</span>
+            </div>
+            <div class="store_line" v-if="v.RSTDE_GUID_CN[0]">
+              <span class="storeContent">{{ v.RSTDE_GUID_CN[0] }}</span>
+            </div>
+            <div id="store_line">
+              <span class="storeContent"
+                ><button @click="displayInfo(v.FCLTY_LA, v.FCLTY_LO)">
+                  위치찾기
+                </button></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
 <script>
-// require('dovenv').config()
+import axios from 'axios'
 export default {
-  mounted() {
-    // const gpsx = 35.195569
-    // const gpsy = 129.075102
-    const mapContainer = document.getElementById('map')
-    const script = document.createElement('script')
-    script.src =
-      // 'http://api.kcisa.kr/API_CNV_045/request?serviceKey=ca5c055a-8dc5-4788-8049-31ca2e238cd3'
-      // 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=cb00c7966b9e945687b4ffee1da8ea51&autoload=false'
-      'https://dapi.kakao.com/v2/maps/sdk.js?appkey=cb00c7966b9e945687b4ffee1da8ea51&libraries=services'
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        // const location = 'http://api.kcisa.kr/API_CNV_045/request'
-        const mapOptions = {
-          center: new window.kakao.maps.LatLng(35.195569, 129.075102), // 지도의 중심
-          level: 4
-        }
-
-        const map = new window.kakao.maps.Map(mapContainer, mapOptions)
-
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            const lat = 35.195569 // position.coords.latitude // 마커위치
-            const lon = 129.075102 // position.coords.longitude // 마커위치
-            const locPosition = new window.kakao.maps.LatLng(lat, lon)
-            const message = '<div>여기가 현재위치</div>'
-            this.displayMarker(map, locPosition, message)
-          })
-        } else {
-          alert(
-            '이 문장은 사용상의 웹 브라우저가 Geolocation API를 지원하지 않을 때 나타납니다.'
-          )
-        }
-      })
+  data() {
+    return {
+      latitude: '',
+      longitude: '',
+      textContent: '',
+      infowindow: null,
+      load_location: false,
+      iwPosition: '',
+      lat: '',
+      lon: '',
+      store_location: ''
     }
-
-    document.body.appendChild(script)
+  },
+  mounted() {
+    if (window.kakao && window.kakao.maps) {
+      this.initMap()
+    } else {
+      const script = document.createElement('script')
+      /* global kakao */
+      this.geofind()
+      script.onload = () => kakao.maps.load(this.initMap)
+      script.src =
+        '//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=272695eface2e5a0142e6434ba2323e6'
+      document.head.appendChild(script)
+    }
   },
 
   methods: {
-    displayMarker(map, locPosition, message) {
-      const marker = new window.kakao.maps.Marker({
-        map: map,
-        position: locPosition
-      })
-      const iwContent = message
-      const iwRemovable = true
-      const infowindow = new window.kakao.maps.InfoWindow({
+    initMap() {
+      const container = document.getElementById('map')
+      const options = {
+        center: new kakao.maps.LatLng(this.latitude, this.longitude),
+        level: 5
+      }
+      // 지도 객체를 등록합니다.
+      // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
+      this.map = new kakao.maps.Map(container, options)
+      this.displayInfoWindow()
+    },
+    displayInfoWindow() {
+      if (this.infowindow && this.infowindow.getMap()) {
+        // 이미 생성한 인포윈도우가 있기 때문에 지도 중심좌표를 인포윈도우 좌표로 이동시킨다.
+        this.map.setCenter(this.infowindow.getPosition())
+        return
+      }
+      const iwContent = '<div style="padding:5px;">현재 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+      const iwPosition = new kakao.maps.LatLng(this.latitude, this.longitude) // 인포윈도우 표시 위치입니다
+      const iwRemoveable = true // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+      this.infowindow = new kakao.maps.InfoWindow({
+        map: this.map, // 인포윈도우가 표시될 지도
+        position: iwPosition,
         content: iwContent,
-        removable: iwRemovable
+        removable: iwRemoveable
       })
 
-      infowindow.open(map, marker)
-      map.setCenter(locPosition)
+      this.map.setCenter(iwPosition)
+      this.store()
+    },
+    geofind() {
+      if (!('geolocation' in navigator)) {
+        this.textContent = 'Geolocation is not available.'
+        return
+      }
+      this.textContent = 'Locating...!'
+
+      // get position
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.latitude = pos.coords.latitude
+          this.longitude = pos.coords.longitude
+          // this.latitude = 35.15253
+          // this.longitude = 129.059852
+        },
+        (err) => {
+          this.textContent = err.message
+        }
+      )
+    },
+    displayInfo(lat, lon) {
+      const iwContent = '<div style="padding:5px;">서점 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+      const iwPosition = new kakao.maps.LatLng(lat, lon) // 인포윈도우 표시 위치입니다
+      const iwRemoveable = true // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+      this.infowindow = new kakao.maps.InfoWindow({
+        map: this.map, // 인포윈도우가 표시될 지도
+        position: iwPosition,
+        content: iwContent,
+        removable: iwRemoveable
+      })
+
+      this.map.setCenter(iwPosition)
+      this.store()
+    },
+    store() {
+      axios
+        .post('BstoreInfo', { lat: this.latitude, lon: this.longitude })
+        .then((res) => {
+          this.store_location = res.data
+          this.load_location = true
+        })
     }
   }
 }
@@ -76,39 +146,72 @@ export default {
 #container {
   width: 100%;
   height: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-#map {
-  width: 900px;
-  height: 500px;
-  border: 1px solid black;
-}
-</style>
-위 코드에서 수정한 내용은 다음과 같습니다:
-<style scoped>
-#container {
-  width: 100%;
-  height: auto;
   /* background-color: black; */
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
 }
 
 #map {
-  width: 900px;
-  height: 500px;
+  width: 400px;
+  height: 600px;
   border: 1px solid black;
 }
 
 #text {
-  width: 900px;
-  height: 150px;
+  width: 450px;
+  height: auto;
+}
+
+div.location {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  color: #817135;
+  background-color: #f5e9a6;
+  border-color: #cfc79d;
+  border-left-width: 20px;
+  border-radius: 5px;
+  padding: 15px;
+  border-left-style: solid;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  width: 450px;
+}
+button {
+  width: 100px;
+  height: 30px;
   border: 1px solid black;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-size: 15px;
+  margin: 2px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  font-family: 'omyu_pretty';
+}
+
+div#store_line button {
+  width: 100px;
+  height: 30px;
+  border: 1px solid #cfc79d;
+  border-radius: 5px;
+  background-color: #cfc79d;
+  color: white;
+  font-size: 15px;
+  margin-top: 5px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  font-family: 'omyu_pretty';
+}
+
+button:hover {
+  background-color: #dfdfdf;
+  color: black;
+}
+
+div#store_line button:hover {
+  background-color: #dfdfdf;
+  color: black;
 }
 </style>

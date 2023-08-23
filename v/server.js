@@ -1,5 +1,7 @@
 require('dotenv').config()
 const express = require('express')
+const https = require('https')
+const fs = require('fs')
 const path = require('path')
 const _path = path.join(__dirname, './dist')
 const logger = require('morgan')
@@ -10,8 +12,11 @@ const axios = require('axios')
 const { mycol, myboard } = require('./mongo_setting')
 const cookieParser = require('cookie-parser')
 const CryptoJS = require('crypto-js')
+const parseString = require('xml2js').parseString
 
 const key = process.env.Book_api
+const Bkey = process.env.booksKey
+const Alkey = process.env.aladdin_api
 
 /* post를 위한 구문 */
 app.use(express.json())
@@ -369,6 +374,76 @@ app.post('/editcancel', async (req, res) => {
   res.send(send)
 })
 
-app.listen(3000, () => {
+// 서점 위치 불러오기
+app.post('/BstoreInfo', (req, response) => {
+  const loc = req.body
+  const Bookurl = `http://api.kcisa.kr/API_CNV_045/request?serviceKey=${Bkey}&numOfRows=417`
+  request.get(Bookurl, (e, res, body) => {
+    parseString(body, async (err, result) => {
+      const bookstore = result.response.body[0].items[0].item
+      const store_array = await bookstore.map((v, i) => {
+        return { lat: Number(v.FCLTY_LA[0]), lon: Number(v.FCLTY_LO[0]) }
+      })
+      function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371 // 지구 반경 (단위: km)
+        const dLat = (lat2 - lat1) * (Math.PI / 180)
+        const dLon = (lon2 - lon1) * (Math.PI / 180)
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * (Math.PI / 180)) *
+            Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2)
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        const distance = R * c // 거리 (단위: km)
+        return distance
+      }
+      const nearestLocations = store_array
+        .map((location) => ({
+          location,
+          distance: calculateDistance(
+            loc.lat,
+            loc.lon,
+            location.lat,
+            location.lon
+          )
+        }))
+        .sort((a, b) => a.distance - b.distance)
+      const nearLocation = nearestLocations.slice(undefined, 5)
+      const result_array = []
+      for (let j = 0; j < 5; j++) {
+        bookstore.forEach((v, i) => {
+          if (
+            nearLocation[j].location.lat === Number(v.FCLTY_LA[0]) &&
+            nearLocation[j].location.lon === Number(v.FCLTY_LO[0])
+          )
+            result_array.push(v)
+        })
+      }
+      const resul = result_array.slice(undefined, 5)
+      response.send(resul)
+    })
+  })
+})
+
+// 베스트셀러 조회
+app.post('/bestseller', (req, response) => {
+  const bookurl = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${Alkey}&QueryType=ItemNewSpecial&MaxResults=10&Cover=Big&start=1&SearchTarget=Book&output=js&Version=20131101`
+  console.log(bookurl)
+  request.get(bookurl, (e, res, body) => {
+    const data = JSON.parse(body).item
+    response.send(data)
+  })
+})
+
+app.listen(8080, () => {
   console.log('서버 open')
+})
+const getSSLOptions = {
+  key: fs.readFileSync(path.resolve('./private.pem')),
+  cert: fs.readFileSync(path.resolve('./public.pem'))
+}
+
+https.createServer(getSSLOptions, app).listen(3000, () => {
+  console.log(`[Server] listening on port 8080`)
 })
