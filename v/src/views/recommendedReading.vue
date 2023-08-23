@@ -26,15 +26,14 @@
           </div>
           <div class="line">
             <span class="fixed">가격</span
-            ><span class="relative">{{ n.priceStandard }}</span>
-          </div>
-          <div class="line">
-            <span class="fixed">할인가</span
-            ><span class="relative">{{ n.priceSales }}</span>
+            ><span class="relative"
+              ><del>{{ numberFormat.format(n.priceStandard) }}</del> →
+              {{ numberFormat.format(n.priceSales) }}</span
+            >
           </div>
           <div class="line" v-if="n.description">
             <span class="fixed">설명</span
-            ><span class="relative">{{ n.description }}</span>
+            ><span class="last">{{ n.description }}</span>
           </div>
         </div>
       </div>
@@ -47,7 +46,8 @@ export default {
   name: 'bestseller',
   data() {
     return {
-      commandArray: ''
+      commandArray: '',
+      numberFormat: new Intl.NumberFormat('ko-KR')
     }
   },
   mounted() {
@@ -92,6 +92,14 @@ span.fixed {
   width: 100px;
 }
 span.relative {
+  display: inline-block;
+  text-align: start;
+  width: 680px;
+  word-break: break-all;
+  word-wrap: break-word;
+  line-height: 0px;
+}
+span.last {
   display: inline-block;
   text-align: start;
   width: 680px;
