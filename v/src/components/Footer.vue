@@ -1,17 +1,16 @@
 <template>
   <div>
-    <h1>Random Quote</h1>
-    <div id="quote">
-      <p>{{ currentQuote.name }}</p>
-      <p>- {{ currentQuote.text }}</p>
+    <div id="quotes">
+      <div id="container" @click="randomQuote">
+        <p>{{ currentQuote.name }}</p>
+        <p class="text">{{ currentQuote.text }}</p>
+      </div>
     </div>
-    <button @click="randomQuote">다른 명언 보기</button>
   </div>
 </template>
 
 <script>
-import quotes from '@/Quotes.js'
-
+import quotes from './quotes.js'
 export default {
   name: 'RandomQuoteComponent',
   data() {
@@ -36,3 +35,32 @@ export default {
   }
 }
 </script>
+<style scoped>
+#quotes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#container {
+  width: 100%;
+  height: 200px;
+  background-color: rgb(119, 119, 119);
+  margin: 10px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+p {
+  color: white;
+}
+p.text{
+  display: inline-block;
+  width : 80%;
+  word-break: keep-all;
+  word-wrap: break-word;
+}
+</style>
