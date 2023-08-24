@@ -1,7 +1,9 @@
 <template>
   <header>화제</header>
 </template>
-<script></script>
+<script>
+
+</script>
 <style scoped>
     header {
         text-align: center;

@@ -1,7 +1,8 @@
 <template>
   <section>
-    <article>급상승
-      <button @click="cm = (cm === 'Nav' ? 'Adv' : 'Nav')">변경</button>
+    <article>
+      급상승
+      <button @click="cm = cm === 'Nav' ? 'Adv' : 'Nav'">변경</button>
     </article>
     <component :is="cm"></component>
   </section>
@@ -35,7 +36,8 @@ section {
   text-align: center;
   /* border: 2px solid red; */
   background-color: white;
-  height: 500px;
+  height: 100%;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 4fr;
 }

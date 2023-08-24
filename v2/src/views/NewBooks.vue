@@ -1,7 +1,8 @@
 <template>
   <div class="centered-book-list">
     <div class="book-list">
-      <h3>신간</h3>
+      <h2>신간</h2>
+      <h4>이 주에 새롭게 등록된 신상품 중 MD가 추천하는 리스트입니다.</h4>
       <ul class="item-list">
         <li v-for="(item, index) in items" :key="index" class="item">
           <div class="item-cover">
@@ -59,7 +60,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .centered-book-list {
   display: flex;
   justify-content: center;
@@ -128,6 +129,8 @@ export default {
   color: #000000;
 }
 .discounted-price {
-  color: red;
+  color: green;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
 </style>
