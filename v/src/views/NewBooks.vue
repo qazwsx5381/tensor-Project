@@ -5,7 +5,9 @@
       <ul class="item-list">
         <li v-for="(item, index) in items" :key="index" class="item">
           <div class="item-cover">
-            <img :src="item.cover" alt="Cover" />
+            <a :href="item.link" target="_blank">
+              <img :src="item.cover" alt="Cover"
+            /></a>
           </div>
           <div class="item-details">
             <div class="item-header">
