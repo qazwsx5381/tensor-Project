@@ -15,10 +15,13 @@
     "express": "^4.18.2",
     "fast-xml-parser": "^4.2.7",
     "iconv-lite": "^0.6.3",
+    "quagga": "^0.12.1",
     "request": "^2.88.2",
     "timers-browserify": "^2.0.12",
     "vue": "^3.2.13",
+    "vue-carousel": "^0.18.0",
     "vue-router": "^4.0.3",
+    "vue-slick-carousel": "^1.0.6",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -57,5 +60,10 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "description": "## Project setup ``` npm install ```",
+  "main": "babel.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
