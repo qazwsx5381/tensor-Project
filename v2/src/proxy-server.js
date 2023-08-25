@@ -21,7 +21,7 @@ app.get('/NewBooks', (req, res) => {
   })
 })
 
-app.get('/Bestseller', (req, res) => {
+app.get('/homeBestseller', (req, res) => {
   const url =
     'http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbzoselalswl981112001&QueryType=Bestseller&Cover=Big&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101'
 

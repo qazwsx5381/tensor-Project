@@ -85,12 +85,12 @@
             @keyup="check_id()"
             placeholder="ID"
           />
-        </div>
-        <div id="checkFailedId" v-if="check_failed">
-          <small>{{ checkid }}</small>
-        </div>
-        <div id="checkSucceseId" v-if="check_succese">
-          <small>{{ checkId }}</small>
+          <div id="checkId" v-if="check_failed">
+            <small>{{ checkid }}</small>
+          </div>
+          <div id="checkId" v-if="check_succese">
+            <small>{{ checkId }}</small>
+          </div>
         </div>
         <div id="signpw">
           <input
@@ -438,14 +438,15 @@ nav a:hover {
 #logo {
   width: 350px;
   height: 100px;
-  margin-top: 50px;
+  margin-top: 30px;
   border-radius: 8px;
 }
 
 #buttoncontainer {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 10px;
+  width: 1200px;
+  margin: auto;
 }
 
 button {
@@ -482,9 +483,9 @@ div#signpw {
 div#succese_login {
   display: flex;
   align-items: end;
-  width: 98%;
+  width: 1200px;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin: auto;
 }
 
 div#succese_login div {
@@ -536,5 +537,12 @@ img#log_close_btn {
 button:hover {
   background-color: #dfdfdf;
   color: black;
+}
+
+#checkId {
+  position: relative;
+  bottom: 25px;
+  font-size: 15px;
+  height: 10px;
 }
 </style>

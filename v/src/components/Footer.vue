@@ -43,8 +43,8 @@ export default {
   flex-direction: column;
 }
 #container {
-  width: 100%;
-  height: 200px;
+  width: 1200px;
+  height: 300px;
   background-color: rgb(119, 119, 119);
   margin: 10px;
   border-radius: 15px;
@@ -57,9 +57,9 @@ export default {
 p {
   color: white;
 }
-p.text{
+p.text {
   display: inline-block;
-  width : 80%;
+  width: 60%;
   word-break: keep-all;
   word-wrap: break-word;
 }
