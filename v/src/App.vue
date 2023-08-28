@@ -97,7 +97,12 @@
             :type="view === true ? 'password' : 'text'"
             v-model="input_pw"
             placeholder="PW"
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+            style="ime-mode: disabled"
           />
+          <!-- <div id="checkId">
+            <small>영어 대·소문자를 포함하여 8자 이상 입력하시오.</small>
+          </div> -->
         </div>
         <div class="imgbtn">
           <button class="image" @click="view_pw">
@@ -120,7 +125,15 @@
           <input type="text" v-model="input_name" placeholder="이름" />
         </div>
         <div>
-          <input type="text" v-model="input_mail" placeholder="E-mail" />
+          <input
+            type="text"
+            v-model="input_mail"
+            placeholder="E-mail"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+          />
+          <!-- <div id="checkId">
+            <small>e-mail 형식에 맞게 입력하시오.</small>
+          </div> -->
         </div>
         <div id="sign_btn">
           <button
