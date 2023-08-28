@@ -102,8 +102,6 @@ section.best-sellers {
   margin-top: 20px;
   display: flex;
   overflow-x: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
   scroll-behavior: smooth;
   justify-content: start;
 }
