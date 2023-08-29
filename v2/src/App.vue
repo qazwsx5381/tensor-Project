@@ -85,12 +85,7 @@
             @keyup="check_id()"
             placeholder="ID"
           />
-        </div>
-        <div id="checkFailedId" v-if="check_failed">
           <small>{{ checkid }}</small>
-        </div>
-        <div id="checkSucceseId" v-if="check_succese">
-          <small>{{ checkId }}</small>
         </div>
         <div id="signpw">
           <input
@@ -215,8 +210,7 @@ export default {
     // 아이디 중복체크
     check_id() {
       if (this.input_id === '') {
-        this.check_failed = false
-        this.check_succese = false
+        this.checkid = ''
       } else {
         axios
           .post('/', {
@@ -224,12 +218,8 @@ export default {
           })
           .then((res) => {
             if (res.data === 'NO') {
-              this.check_succese = false
-              this.check_failed = true
               this.checkid = '중복된 아이디입니다. 다시 입력해주세요.'
             } else {
-              this.check_succese = true
-              this.check_failed = false
               this.checkId = '사용가능한 아이디입니다.'
             }
           })
