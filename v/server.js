@@ -190,7 +190,7 @@ async function logout(event) {
         { _id: 0, __v: 0 }
       )
       .lean() // p349 설명 효율적 메소드
-    return t
+    return
   } catch (error) {
     console.error
   }
