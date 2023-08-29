@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="width">
     <Content />
     <Header />
     <Footer />
@@ -17,4 +17,9 @@ export default {
   }
 }
 </script>
-<style></style>
+<style scoped>
+div.width {
+  width: auto;
+  margin: auto;
+}
+</style>

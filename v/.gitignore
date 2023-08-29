@@ -5,6 +5,8 @@ dist
 config
 private.pem
 public.pem
+api_data.xlsx
+updated_api_data.xlsx
 
 # local env files
 .env
