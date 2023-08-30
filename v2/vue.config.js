@@ -5,6 +5,11 @@ module.exports = defineConfig({
 // vue.config.js
 module.exports = {
   devServer: {
-    historyApiFallback: true
+    proxy: {
+      '/Header': {
+        target: 'http://localhost:3001', // 프록시 서버 주소
+        changeOrigin: true
+      }
+    }
   }
 }
