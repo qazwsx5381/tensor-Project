@@ -32,6 +32,7 @@ export default {
   mounted() {
     // 초기에 랜덤 명언을 표시
     this.randomQuote()
+    setInterval(this.randomQuote, 5000)
   }
 }
 </script>
@@ -57,9 +58,9 @@ export default {
 p {
   color: white;
 }
-p.text{
+p.text {
   display: inline-block;
-  width : 80%;
+  width: 80%;
   word-break: keep-all;
   word-wrap: break-word;
 }

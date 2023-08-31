@@ -1,18 +1,13 @@
 <template>
   <section>
-    <article>
-      급상승
-      <button @click="cm = cm === 'Nav' ? 'Adv' : 'Nav'">변경</button>
-    </article>
+    <article>급상승</article>
     <component :is="cm"></component>
   </section>
   <!-- <Nav /> -->
   <!-- <Adv /> -->
 </template>
 <script>
-import Adv from './Adv.vue'
 import Nav from './Nav.vue'
-import Header from './Header.vue'
 export default {
   data() {
     return {
@@ -20,9 +15,7 @@ export default {
     }
   },
   components: {
-    Adv,
-    Nav,
-    Header
+    Nav
   }
 }
 </script>
