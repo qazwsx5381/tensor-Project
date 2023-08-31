@@ -2,9 +2,14 @@ const express = require('express')
 const axios = require('axios')
 const cheerio = require('cheerio')
 const request = require('request')
+const iconv = require('iconv-lite')
 
 const app = express()
 const port = process.env.PORT || 3001
+
+app.listen(3001, () => {
+  console.log('http://localhost:3001/')
+})
 
 app.use(express.json())
 
@@ -115,6 +120,30 @@ app.get('/dd', (req, res) => {
     })
 })
 
-app.listen(port, () => {
-  console.log(`Proxy server is running on port ${port}`)
+// 인기검색어 순위
+app.get('/', (req, res) => {
+  axios({
+    url: 'https://www.yes24.com/main/default.aspx',
+    method: 'GET',
+    responseType: 'arraybuffer'
+  })
+    .then((response) => {
+      const data = iconv.decode(response.data, 'euc-kr')
+      const $ = cheerio.load(data)
+      const rank = []
+
+      $('span.txt').each(function () {
+        rank.push($(this).text())
+      })
+
+      rank.forEach((v, i) => {
+        console.log(`${i + 1}위: ${v}`)
+      })
+
+      res.send(rank)
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      res.status(500).send('An error occurred.')
+    })
 })

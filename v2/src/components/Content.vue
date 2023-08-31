@@ -1,24 +1,39 @@
 <template>
-  <section>
-    <article>급상승</article>
-    <component :is="cm"></component>
-  </section>
-  <!-- <Nav /> -->
-  <!-- <Adv /> -->
+  <div>
+    <h1>링크</h1>
+    <ul>
+      <li v-for="(book, index) in bookRankings" :key="index">
+        {{ index + 1 }}위: {{ book }}
+      </li>
+    </ul>
+  </div>
 </template>
+
 <script>
-import Nav from './Nav.vue'
+import axios from 'axios'
+
 export default {
   data() {
     return {
-      cm: 'Nav'
+      bookRankings: []
     }
   },
-  components: {
-    Nav
+  created() {
+    this.fetchBookRankings()
+  },
+  methods: {
+    async fetchBookRankings() {
+      try {
+        const response = await axios.get('http://localhost:3001/')
+        this.bookRankings = response.data
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    }
   }
 }
 </script>
+
 <style scoped>
 article {
   padding: 25px;
