@@ -83,7 +83,7 @@ app.get('/', (req, res) => {
 })
 
 // 이달의 주목도서 목록
-app.get('/', (req, res) => {
+app.get('/dd', (req, res) => {
   axios({
     url: 'https://www.aladin.co.kr/home/welcome.aspx',
     method: 'GET'

@@ -64,49 +64,53 @@ app.post('/about', (req, response) => {
 })
 
 app.post('/', (req, response) => {
-  const data = req.body
-  // 회원가입
-  if (data.name && data.mail) {
-    main(data)
-    response.send('succese')
-  }
-  // 로그인(쿠키생성)
-  else if (data.pw && data.id) {
-    login(data).then((res) => {
-      if (res[0] === undefined) {
-        return response.send('error')
-      }
-      const pw = CryptoJS.AES.decrypt(res[0].pw, res[0].id)
-      const pw_1 = pw.toString(CryptoJS.enc.Utf8)
-      if (data.pw != pw_1) {
-        response.send('error')
-      } else {
-        response.cookie(res[0].id, res[0].name, {
-          maxAge: 3600000
-        })
-        response.send({ id: res[0].id, name: res[0].name })
-      }
-    })
-  }
-  // 아이디 중복학인
-  else if (data.id) {
-    check(data).then((res) => {
-      if (res.length === 1) {
-        response.send('NO')
-      } else {
-        response.send('OK')
-      }
-    })
-  }
-  // 로그아웃
-  else if (data.loginID) {
-    logout(data.loginID).then((res) => {
-      response.cookie(res[0].id, res[0].name, {
-        maxAge: 0,
-        httpOnly: true
+  try {
+    const data = req.body
+    // 회원가입
+    if (data.name && data.mail) {
+      main(data)
+      response.send('succese')
+    }
+    // 로그인(쿠키생성)
+    else if (data.pw && data.id) {
+      login(data).then((res) => {
+        if (res[0] === undefined) {
+          return response.send('error')
+        }
+        const pw = CryptoJS.AES.decrypt(res[0].pw, res[0].id)
+        const pw_1 = pw.toString(CryptoJS.enc.Utf8)
+        if (data.pw != pw_1) {
+          response.send('error')
+        } else {
+          response.cookie(res[0].id, res[0].name, {
+            maxAge: 3600000
+          })
+          response.send({ id: res[0].id, name: res[0].name })
+        }
       })
-      response.send('logout')
-    })
+    }
+    // 아이디 중복학인
+    else if (data.id) {
+      check(data).then((res) => {
+        if (res.length === 1) {
+          response.send('NO')
+        } else {
+          response.send('OK')
+        }
+      })
+    }
+    // 로그아웃
+    else if (data.loginID) {
+      logout(data.loginID).then((res) => {
+        response.cookie(res[0].id, res[0].name, {
+          maxAge: 0,
+          httpOnly: true
+        })
+        response.send('logout')
+      })
+    }
+  } catch (error) {
+    console.log(error)
   }
 })
 
