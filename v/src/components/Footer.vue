@@ -32,6 +32,8 @@ export default {
   mounted() {
     // 초기에 랜덤 명언을 표시
     this.randomQuote()
+    // 시간이 지나면 자동으로 넘김
+    setInterval(this.randomQuote, 5000)
   }
 }
 </script>

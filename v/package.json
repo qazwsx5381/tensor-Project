@@ -24,6 +24,7 @@
     "express-sanitizer": "^1.0.6",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
+    "iconv-lite": "^0.6.3",
     "mongoose": "^7.4.2",
     "morgan": "^1.10.0",
     "node-fetch": "^2.7.0",
