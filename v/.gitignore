@@ -7,6 +7,9 @@ private.pem
 public.pem
 api_data.xlsx
 updated_api_data.xlsx
+atomic-box-397600-445e9d0ea33c.json
+my_custom_model.json
+my_custom_model.weights.bin
 
 # local env files
 .env

@@ -8,12 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.0.1",
     "@tensorflow/tfjs": "^4.10.0",
+    "@tensorflow/tfjs-node": "^3.1.0",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "connect-history-api-fallback": "^2.0.0",
     "cookie-parser": "^1.4.6",
     "core-js": "^3.8.3",
+    "cross-fetch": "^4.0.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.3.1",
     "exceljs": "^4.3.0",
@@ -24,10 +27,12 @@
     "iconv-lite": "^0.6.3",
     "mongoose": "^7.4.2",
     "morgan": "^1.10.0",
+    "node-fetch": "^2.7.0",
     "nodemon": "^3.0.1",
     "path": "^0.12.7",
     "quagga": "^0.12.1",
     "request": "^2.88.2",
+    "util": "^0.12.5",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "xml2js": "^0.6.2"

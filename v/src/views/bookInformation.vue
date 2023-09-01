@@ -61,6 +61,30 @@
             ></span
           >
         </div>
+        <div class="rating">
+          <span class="list">실제평점</span>
+          <div class="list_text">
+            <span
+              v-for="star in 5"
+              :key="star"
+              :class="['star', star <= ratingscore / 2 ? 'filled' : '']"
+            >
+              ★
+            </span>
+          </div>
+        </div>
+        <div class="rating">
+          <span class="list">예측평점</span>
+          <div class="list_text">
+            <span
+              v-for="star in 5"
+              :key="star"
+              :class="['star', star <= score / 2 ? 'filled' : '']"
+            >
+              ★
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +106,8 @@ export default {
       publis_date: '',
       error_msg: '',
       price_link: '',
+      score: '',
+      ratingscore: '',
       img_src: './no_img.png'
     }
   },
@@ -157,10 +183,12 @@ export default {
             this.price = data.price
             this.publisher = data.publisher
             this.publis_date = data.public_date
+            this.score = data.tensor
+            this.ratingscore = data.rating
             this.price_link =
               'https://www.bookprice.co.kr/compare.jsp?isbn=' + e
-            if (data.img.length === 1) {
-              this.img_src = data.img[0]
+            if (data.img) {
+              this.img_src = data.img
             } else {
               this.img_src =
                 'http://www.myeongin.net/app/dubu_board/docs/imgs/d/lg_d16124045780126_%EC%9D%B4%EB%AF%B8%EC%A7%80%EC%A4%80%EB%B9%84%EC%A4%91.jpg'
@@ -208,6 +236,7 @@ button.barcode_btn {
   display: flex;
   justify-content: center;
   margin-top: 30px;
+  align-items: center;
 }
 
 #result_txt {
@@ -226,6 +255,12 @@ button.barcode_btn {
 }
 
 /* 책 내용 정리 */
+
+img#load_image {
+  border: 1px solid black;
+  box-shadow: 1px 1px 5px gray;
+  margin-right: 50px;
+}
 .list {
   width: 200px;
   font-weight: bolder;
@@ -238,6 +273,7 @@ button.barcode_btn {
   width: 70%;
   margin: 5px 0;
   vertical-align: middle;
+  height: 24px;
 }
 
 img#log_close_btn {
@@ -255,5 +291,23 @@ button.barcode_btn {
   width: 60px;
   height: 48px;
   margin: 0 auto 10px auto;
+}
+.rating {
+  font-size: 24px;
+  display: flex;
+}
+
+.star {
+  display: inline-block;
+  width: 24px; /* 별의 크기를 정사각형으로 조절 */
+  height: 24px;
+  color: #ccc;
+  transition: color 0.3s;
+  position: relative;
+  top: -7px;
+}
+
+.filled {
+  color: gold;
 }
 </style>

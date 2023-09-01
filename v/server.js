@@ -16,6 +16,9 @@ const parseString = require('xml2js').parseString
 const xml2js = require('xml2js')
 const ExcelJS = require('exceljs')
 const tf = require('@tensorflow/tfjs')
+const { Storage } = require('@google-cloud/storage')
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
 const key = process.env.Book_api
 const Bkey = process.env.booksKey
@@ -34,35 +37,30 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
-app.post('/about', (req, response) => {
+app.post('/about', async (req, response) => {
   const book_isbn = req.body.scandata
   const url = `https://www.nl.go.kr/seoji/SearchApi.do?cert_key=${key}&result_style=json&page_no=1&page_size=1&isbn=${book_isbn}`
-  request(url, (e, res, body) => {
+  request(url, async (e, res, body) => {
     const send = JSON.parse(body)
     const data = send.docs[0]
     if (data === undefined) {
       const send_data = data
       response.send(send_data)
     } else {
-      const websiteUrl =
-        'https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=Used&SearchWord=' +
-        encodeURIComponent(data.TITLE)
-      fetchImages(websiteUrl)
-        .then((images) => {
-          console.log('Fetched images:', images)
-          const send_data = {
-            bookname: data.TITLE,
-            img: images,
-            price: data.PRE_PRICE,
-            publisher: data.PUBLISHER,
-            public_date: data.PUBLISH_PREDATE,
-            author: data.AUTHOR
-          }
-          response.send(send_data)
-        })
-        .catch((error) => {
-          console.error('Error:', error)
-        })
+      const tensorData = await QR_tensor(data.EA_ISBN)
+      console.log(tensorData)
+      const send_data = {
+        bookname: data.TITLE,
+        img: tensorData.imgLink,
+        price: data.PRE_PRICE,
+        publisher: data.PUBLISHER,
+        public_date: data.PUBLISH_PREDATE,
+        author: data.AUTHOR,
+        tensor: tensorData.data,
+        rating: tensorData.rating
+      }
+      console.log(send_data)
+      response.send(send_data)
     }
   })
 })
@@ -455,214 +453,42 @@ app.post('/NewBooks', (req, res) => {
   })
 })
 
-//tensorflow 데이터 excel로 저장
-const excelFile = 'api_data.xlsx'
-const workbook = new ExcelJS.Workbook()
-const sheet = workbook.addWorksheet('Sheet 1')
-sheet.addRow(['isbn13', 'priceSales', 'salesPoint'])
-const bestUrl = []
-for (let i = 0; i < 20; i++) {
-  bestUrl[
-    i
-  ] = `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${Alkey}&QueryType=Bestseller&MaxResults=100&Cover=Big&start=${
-    i + 1
-  }&SearchTarget=Book&Version=20131101`
-}
-
-/* excel 최신화 시키는 function ( 순서대로 실행하기 / api조회를 1000번 하기에 시간이 소요됨. ) */
-// fetchAndSaveData() // 1번
-// api_read() // 2번
-
-// tensor용 기본 데이터 파일 생성
-async function fetchAndSaveData() {
-  for (const url of bestUrl) {
-    try {
-      await fetchAndParseXml(url)
-      console.log(`Data processed`)
-    } catch (error) {
-      console.error(`Error processing data from ${url}:`, error)
-    }
+// tensor 불러오기
+async function tensorData(a, b) {
+  try {
+    const MODEL_URL = 'http://localhost:8080/my_custom_model.json'
+    const model = await tf.loadLayersModel(MODEL_URL)
+    const data = await model.predict(tf.tensor([[a, b]])).data()
+    const send = Array.from(data)[0]
+    return send
+  } catch (error) {
+    console.error('Model loading error:', error)
   }
-
-  // Excel 파일 저장
-  workbook.xlsx
-    .writeFile(excelFile)
-    .then(() => {
-      console.log(`API 데이터를 ${excelFile}로 저장 완료!`)
-    })
-    .catch((writeErr) => {
-      console.error('Error writing Excel file:', writeErr)
-    })
 }
-// 베스트 셀러의 isbn코드, 판매가격과 할인판매가격을 불러와 엑셀에 추가
-function fetchAndParseXml(url) {
-  return axios
-    .get(url)
-    .then((response) => response.data)
-    .then(
-      (xmlData) =>
-        new Promise((resolve, reject) => {
-          xml2js.parseString(xmlData, (parseErr, result) => {
-            if (parseErr) {
-              reject(parseErr)
-              return
-            }
-            const items = result.object.item
-
-            items.forEach((item, i) => {
-              sheet.addRow([
-                item.isbn13[0],
-                item.priceSales[0],
-                item.salesPoint[0]
-              ])
-            })
-
-            resolve()
+// QR코드 로드시 예측할 값 불러오기
+async function QR_tensor(data) {
+  try {
+    const url = `https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${Alkey}&ItemId=${data}&ItemIdType=ISBN13&OptResult=bestSellerRank,ratingInfo&Version=20131101&Output=js&Cover=Big`
+    // const url =
+    //   'https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbqazwsx53811416001&ItemId=9791162244647&ItemIdType=ISBN13&OptResult=bestSellerRank,ratingInfo&Version=20131101&Output=js'
+    return new Promise((resolve, reject) => {
+      request(url, async (e, res, body) => {
+        if (e) {
+          reject(e)
+        } else {
+          const data = JSON.parse(body).item[0]
+          const tensor = await tensorData(data.priceSales, data.salesPoint)
+          resolve({
+            data: tensor,
+            imgLink: data.cover,
+            rating: data.subInfo.ratingInfo.ratingScore
           })
-        })
-    )
-}
-
-// isbn13코드로 api 호출해서 평점을 엑셀 4번 열에 저장하기
-function api_read() {
-  workbook.xlsx
-    .readFile(excelFile)
-    .then(() => {
-      const sheet = workbook.getWorksheet('Sheet 1')
-
-      // API 데이터 가져오기
-      async function fetchAndXml(url) {
-        try {
-          const response = await axios.get(url)
-          const xmlData = response.data
-          const result = await xml2js.parseStringPromise(xmlData)
-          // console.log(result.object.item[0].subInfo[0].ratingInfo[0].ratingScore[0])
-          const items =
-            result.object.item[0].subInfo[0].ratingInfo[0].ratingScore[0]
-          return items
-        } catch (error) {
-          console.error(`Error fetching data from API: ${error.message}`)
-          return null
-        }
-      }
-
-      // 각 셀에서 API 호출 및 데이터 쓰기
-      async function processCells() {
-        for (let rowNum = 2; rowNum <= sheet.rowCount; rowNum++) {
-          // 첫 번째 행은 제목
-          const row = sheet.getRow(rowNum)
-          const data = row.getCell(1).value // row열의 첫번째 값 가져오기
-          const apiUrl = `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${Alkey}&ItemId=${data}&ItemIdType=ISBN13&OptResult=bestSellerRank,ratingInfo&Version=20131101` // 각 셀에 있는 값을 가져오기
-
-          if (apiUrl) {
-            try {
-              const items = await fetchAndXml(apiUrl)
-              if (items) {
-                row.getCell(4).value = items // 같은 셀에 데이터 쓰기
-                console.log(`Data for Cell (${rowNum}, 4) processed`)
-              }
-            } catch (error) {
-              console.error(
-                `Error processing data for Cell (${rowNum}, 4): ${error.message}`
-              )
-            }
-          }
-        }
-
-        // 수정된 엑셀 파일 저장
-        workbook.xlsx
-          .writeFile('updated_' + excelFile)
-          .then(() => {
-            console.log(`Updated Excel file saved!`)
-          })
-          .catch((writeErr) => {
-            console.error('Error writing updated Excel file:', writeErr)
-          })
-      }
-
-      processCells()
-    })
-    .catch((readErr) => {
-      console.error('Error reading Excel file:', readErr)
-    })
-}
-
-// 엑셀에서 텐서데이터(array)로 변환
-async function dataCreate() {
-  return workbook.xlsx
-    .readFile('updated_' + excelFile)
-    .then(() => {
-      const sheet = workbook.getWorksheet('Sheet 1') // 시트 이름
-
-      const dataArray = []
-      // 각 행의 데이터를 배열로 저장
-      sheet.eachRow((row, rowNum) => {
-        if (rowNum !== 1) {
-          // 첫 번째 행은 제목일 경우 제외
-          const rowData = []
-          row.eachCell((cell) => {
-            rowData.push(Number(cell.value))
-          })
-          dataArray.push(rowData)
         }
       })
-      return dataArray
     })
-    .catch((readErr) => {
-      console.error('Error reading Excel file:', readErr)
-    })
-}
-/* tensor 데이터 생성 */
-// createTensor() // tensorflow 실행함수
-async function createTensor() {
-  const data = await dataCreate()
-  const xtensordata = data.map((v) => {
-    return [v[1], v[2]]
-  })
-  const ytensordata = data.map((v) => {
-    return [v[3]]
-  })
-  tensorEdu(xtensordata, ytensordata)
-}
-
-/* tensor data 구성 및 예측시작 */
-async function tensorEdu(xevent, yevent) {
-  const x = xevent
-  const y = yevent
-  const xs = tf.tensor(x)
-  const ys = tf.tensor(y)
-
-  /* 2. 모델만들기 */
-  const xx = tf.input({ shape: [2] }) // 값 넣기
-  const layer1 = tf.layers
-    .dense({ units: 500, activation: 'sigmoid' })
-    .apply(xx)
-  // const layer2 = tf.layers
-  //   .dense({ units: 50, activation: 'relu' })
-  //   .apply(layer1)
-  // const layer3 = tf.layers
-  //   .dense({ units: 25, activation: 'relu' })
-  //   .apply(layer2)
-  const yy = tf.layers.dense({ units: 1 }).apply(layer1)
-  const model = tf.model({ inputs: xx, outputs: yy })
-  const c_param = {
-    optimizer: tf.train.adam(),
-    loss: tf.losses.meanSquaredError
+  } catch (error) {
+    console.log(error)
   }
-  model.compile(c_param)
-  /* 3. 모델로 훈련 시작 */
-  const f_param = {
-    batchSize: 256,
-    epochs: 1000,
-    callbacks: {
-      onEpochEnd: (e, l) => {
-        console.log('epoch : ', e, l, 'RMSE=>', Math.sqrt(l.loss))
-      }
-    }
-  }
-  model.fit(xs, ys, f_param).then(() => {
-    model.predict(xs).print()
-  })
 }
 
 /* 홈화면 서버구성 */
@@ -694,3 +520,98 @@ const getSSLOptions = {
 https.createServer(getSSLOptions, app).listen(3000, () => {
   console.log(`[Server] listening on port 8080`)
 })
+
+/** ===================사용안함=================== */
+/* tensorflow model upload */
+const storage = new Storage({
+  projectId: 'atomic-box-397600',
+  keyFilename: 'D:/tensorProject/v/atomic-box-397600-445e9d0ea33c.json' // 인증 정보 파일 경로
+})
+const bucketName = 'tensor_qazwsx5381' // 클라우드 스토리지 버킷 이름
+const modelPath = 'my_custom_model.json'
+
+async function uploadFile(filePath, destinationFileName) {
+  try {
+    const bucket = storage.bucket(bucketName)
+    const options = {
+      destination: destinationFileName, // 업로드할 파일의 저장 경로
+      metadata: {
+        cacheControl: 'public, max-age=31536000' // 메타데이터 설정
+      }
+    }
+
+    await bucket.upload(filePath, options)
+    console.log(`${filePath} uploaded to ${bucketName}/${destinationFileName}`)
+  } catch (error) {
+    console.error('Upload error:', error)
+  }
+}
+
+async function loadModelFromGCS() {
+  try {
+    const bucket = storage.bucket(bucketName)
+    const blob = bucket.file(modelPath)
+
+    // 모델 파일을 로컬 임시 디렉토리로 다운로드
+    const tempLocalFilePath = '/model.json' // 로컬 임시 디렉토리 경로
+    await blob.download({ destination: tempLocalFilePath })
+
+    // 다운로드한 모델을 로드
+    fetch(MODEL_URL)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error)
+      })
+    const model = await tf.loadLayersModel(`file://${tempLocalFilePath}`)
+    console.log('Model loaded from Google Cloud Storage:', model.summary())
+  } catch (error) {
+    console.error('Model loading error:', error)
+  }
+}
+// const filePath = 'D:/tensorProject/v/my_custom_model.json' // 업로드할 파일 경로
+// const destinationFileName = 'my_custom_model.json' // 클라우드 스토리지에 저장할 파일 이름
+const filePath = 'D:/tensorProject/v/my_custom_model.weights.bin' // 업로드할 파일 경로
+const destinationFileName = 'my_custom_model.weights.bin' // 클라우드 스토리지에 저장할 파일 이름
+
+/** tensorflow 저장함수 */
+// uploadFile(filePath, destinationFileName)
+
+/** 모델 불러오기 */
+// loadModelFromGCS()
+
+// const tfnode = require('@tensorflow/tfjs-node')
+
+async function tensor12() {
+  const MODEL_URL =
+    'https://storage.googleapis.com/tensor_qazwsx5381/my_custom_model.json'
+  const BIN_URL =
+    'https://storage.googleapis.com/tensor_qazwsx5381/my_custom_model.weights.bin'
+  // const MODEL_URL = 'http://localhost:8080/my_custom_model.json'
+  // const BIN_URL = 'http://localhost:8080/my_custom_model_weights.bin'
+  Promise.all([
+    fetch(MODEL_URL).then((response) => response.json()),
+    fetch(BIN_URL).then((response) => response.arrayBuffer())
+  ])
+    .then(async ([modelJson, modelBinBuffer]) => {
+      const model = await tf.loadLayersModel(
+        tf.io.fromMemory(modelJson),
+        tf.io.fromMemory(modelBinBuffer)
+      )
+
+      // 예측에 사용할 입력 데이터 설정
+      const inputTensor = tf.tensor([[19800, 50000]]) // 예시 입력 데이터
+
+      // 예측 수행
+      const prediction = model.predict(inputTensor)
+
+      // 예측 결과 출력
+      prediction.print()
+    })
+    .catch((error) => {
+      console.error('Fetch error:', error)
+    })
+}
+// tensor12()

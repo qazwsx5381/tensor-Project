@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.5/xlsx.full.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
+  </head>
+  <body>
+    <input type="file" onchange="readExcel()" />
+    <button id="learn" disabled>학습</button>
+    <script>
+      let train
+      const learn = document.getElementById('learn')
+      const readExcel = () => {
+        const input = this.event.target
+        const reader = new FileReader()
+        let x_train, y_train, x_test, y_test
+        reader.onload = function () {
+          const data = reader.result
+          const workBook = XLSX.read(data, { type: 'binary' })
+          train = JSON.parse(
+            JSON.stringify(XLSX.utils.sheet_to_json(workBook.Sheets['Sheet1']))
+          )
+          x_train = train
+            .filter((v, i) => {
+              return i % 5 === 3
+            })
+            .map((v, i) => {
+              return [Number(v.priceSales), Number(v.salesPoint)]
+            })
+          x_test = train
+            .filter((v, i) => {
+              return i % 5 != 3
+            })
+            .map((v, i) => {
+              return [Number(v.priceSales), Number(v.salesPoint)]
+            })
+          y_train = train
+            .filter((v, i) => {
+              return i % 5 === 3
+            })
+            .map((v, i) => {
+              return Number(v.__EMPTY)
+            })
+          y_test = train
+            .filter((v, i) => {
+              return i % 5 != 3
+            })
+            .map((v, i) => {
+              return [Number(v.__EMPTY)]
+            })
+          console.log(y_train)
+          learn.disabled = false
+          learn.addEventListener('click', async () => {
+            learn.disabled = true
+            await readyData(data, x_test, y_test, x_train)
+          })
+        }
+        reader.readAsBinaryString(input.files[0])
+      }
+      async function readyData(data, x_data, y_data, z_data) {
+        const xs = tf.tensor(x_data)
+        const ys = tf.tensor(y_data)
+        const zs = tf.tensor(z_data)
+
+        // const model = tf.sequential()
+        // model.add(
+        //   tf.layers.dense({
+        //     units: 1,
+        //     inputShape: [2],
+        //     activation: 'softmax'
+        //   })
+        // )
+        // model.add(
+        //   tf.layers.dense({
+        //     units: 1,
+        //     activation: 'sigmoid'
+        //   })
+        // )
+        // const param = {
+        //   optimizer: tf.train.adam(),
+        //   loss: tf.losses.meanSquaredError
+        // }
+        // model.compile(param)
+
+        // const fitParam = {
+        //   batchSize: 128,
+        //   epochs: 1000,
+        //   callbacks: [
+        //     {
+        //       onEpochEnd: (epoch, logs) => {
+        //         console.log(
+        //           'epoch: ',
+        //           epoch,
+        //           logs,
+        //           'RMSE=>',
+        //           Math.sqrt(logs.loss)
+        //         )
+        //       }
+        //     }
+        //   ]
+        // }
+        /* =================================================== */
+        const xx = tf.input({ shape: [2] }) // 값 넣기
+        const layer1 = tf.layers
+          .dense({ units: 5000, activation: 'sigmoid' })
+          .apply(xx)
+        const layer2 = tf.layers
+          .dense({ units: 50, activation: 'relu' })
+          .apply(layer1)
+        // const layer3 = tf.layers
+        //   .dense({ units: 25, activation: 'relu' })
+        //   .apply(layer2)
+        const yy = tf.layers.dense({ units: 1 }).apply(layer2)
+        const model = tf.model({ inputs: xx, outputs: yy })
+        const c_param = {
+          optimizer: tf.train.adam(),
+          loss: tf.losses.meanSquaredError
+        }
+        model.compile(c_param)
+        /* 3. 모델로 훈련 시작 */
+        const f_param = {
+          batchSize: 256,
+          epochs: 100,
+          callbacks: {
+            onEpochEnd: (e, l) => {
+              console.log('epoch : ', e, l, 'RMSE=>', Math.sqrt(l.loss))
+            }
+          }
+        }
+
+        ;(async () => {
+          await model.fit(xs, ys, f_param)
+          //   await model.fit(xs, ys, fitParam)
+          await model.predict(zs).print()
+          // await model.save('downloads://my_custom_model')
+          let result_data = await model.predict(zs).data()
+          let result = await model.predict(tf.tensor([[19800, 50000]])).print()
+          const result2 = Array.from(result_data).map((v, i) => {
+            return { x: z_data[i], y: v } // x: 20%의 test TV, y: 그 예측값
+          })
+          console.log(result)
+        })()
+      }
+    </script>
+  </body>
+</html>
