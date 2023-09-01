@@ -19,6 +19,7 @@ const tf = require('@tensorflow/tfjs')
 const { Storage } = require('@google-cloud/storage')
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args))
+const iconv = require('iconv-lite')
 
 const key = process.env.Book_api
 const Bkey = process.env.booksKey
@@ -501,10 +502,64 @@ app.post('/homeBestseller', (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' })
       return
     }
+    res.header('Access-Control-Allow-Origin', '*')
     res.send(body)
   })
 })
+app.post('/hotBook', (req, res) => {
+  axios({
+    url: 'https://www.aladin.co.kr/home/welcome.aspx',
+    method: 'GET'
+  })
+    .then((response) => {
+      const $ = cheerio.load(response.data)
 
+      const welcomeSection = $(
+        '.welcome_section3 .swiper-wrapper .swiper-slide'
+      )
+
+      const titles = welcomeSection
+        .find('.r_text .tit')
+        .map((index, element) => $(element).text())
+        .get()
+      const covers = welcomeSection
+        .find('.cover img')
+        .map((index, element) => $(element).attr('src'))
+        .get()
+      const subs = welcomeSection
+        .find('.r_text .sub')
+        .map((index, element) => $(element).text())
+        .get()
+
+      const data = titles.map((title, index) => ({
+        title,
+        cover: covers[index],
+        subtitle: subs[index]
+      }))
+      res.header('Access-Control-Allow-Origin', '*')
+      res.send(data)
+    })
+    .catch((err) => {
+      console.error(err)
+      res.status(500).send('Internal Server Error')
+    })
+})
+app.post('/realTime', (req, res) => {
+  const url = 'https://www.yes24.com/main/default.aspx'
+  axios
+    .get(url, { responseType: 'arraybuffer', responseEncoding: 'binary' })
+    .then((response) => {
+      const data = iconv.decode(response.data, 'euc-kr')
+      const $ = cheerio.load(data)
+      const rank = []
+      $('span.txt').each(function () {
+        rank.push($(this).text())
+      })
+      res.send(rank)
+    })
+})
+
+/* ================================================================================== */
 // http 서버 열기
 app.listen(8080, () => {
   console.log('서버 open')

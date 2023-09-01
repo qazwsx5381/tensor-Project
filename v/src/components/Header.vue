@@ -1,5 +1,22 @@
 <template>
-  <div></div>
+  <div class="width">
+    <Content />
+    <Nav />
+  </div>
 </template>
-<script></script>
-<style></style>
+<script>
+import Nav from '../components/Nav.vue'
+import Content from '../components/Content.vue'
+export default {
+  components: {
+    Nav,
+    Content
+  }
+}
+</script>
+<style scoped>
+div {
+  display: flex;
+  justify-content: center;
+}
+</style>

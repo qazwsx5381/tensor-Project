@@ -1,7 +1,6 @@
 <template>
   <section class="best-sellers">
     <h3 class="section-title">베스트셀러</h3>
-    <br />
     <div class="book-list">
       <div v-for="(item, itemIndex) in items" :key="itemIndex" class="item">
         <div class="item-cover">
@@ -93,7 +92,7 @@ section.best-sellers {
 .section-title {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin: 0;
 }
 
 /* Add margin between section title and list */

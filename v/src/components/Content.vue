@@ -1,18 +1,21 @@
 <template>
   <section>
     <article>
-      <p v-if="rankBox.length > 0">{{ rankBox.join(', ') }}</p>
-      <p v-else>Loading...</p>
+      <h3>실시간 검색순위</h3>
+      <div class="line" v-for="(v, i) in rankBox" :key="i">
+        <span class="rank">{{ i + 1 }}</span>
+        <span class="text">{{ v }}</span>
+      </div>
     </article>
   </section>
 </template>
 <script>
-import fetchData from './Rank.js'
+import axios from 'axios'
 
 export default {
   data() {
     return {
-      rankBox: []
+      rankBox: ''
     }
   },
   mounted() {
@@ -21,7 +24,10 @@ export default {
   methods: {
     async loadData() {
       try {
-        this.rankBox = await fetchData()
+        axios.post('/realTime').then((res) => {
+          this.rankBox = res.data
+          console.log(this.rankBox)
+        })
       } catch (error) {
         console.error('An error occurred while loading data:', error)
         this.rankBox = ['Error']
@@ -33,15 +39,36 @@ export default {
 <style scoped>
 article {
   width: 300px;
-  padding: 25px;
-  border: 2px solid green;
-  background-color: antiquewhite;
 }
-section {
-  text-align: center;
-  width: 1200px;
-  background-color: white;
-  height: auto;
+h3 {
+  margin: 0;
+  margin-bottom: 20px;
+}
+div.line {
   display: flex;
+  justify-content: start;
+  align-items: center;
+}
+div.line:hover {
+  transform: scale(1.15);
+  transition: transform 0.5s;
+}
+span.rank {
+  display: flex;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  color: white;
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+}
+span.text {
+  word-break: keep-all;
+  word-wrap: break-word;
 }
 </style>
