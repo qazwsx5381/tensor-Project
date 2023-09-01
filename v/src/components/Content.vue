@@ -1,28 +1,32 @@
 <template>
   <section>
     <article>
-      급상승
-      <button @click="cm = cm === 'Nav' ? 'Adv' : 'Nav'">변경</button>
+      <p v-if="rankBox.length > 0">{{ rankBox.join(', ') }}</p>
+      <p v-else>Loading...</p>
     </article>
-    <component :is="cm"></component>
   </section>
-  <!-- <Nav /> -->
-  <!-- <Adv /> -->
 </template>
 <script>
-import Adv from './Adv.vue'
-import Nav from './Nav.vue'
-import Header from './Header.vue'
+import fetchData from './Rank.js'
+
 export default {
   data() {
     return {
-      cm: 'Nav'
+      rankBox: []
     }
   },
-  components: {
-    Adv,
-    Nav,
-    Header
+  mounted() {
+    this.loadData()
+  },
+  methods: {
+    async loadData() {
+      try {
+        this.rankBox = await fetchData()
+      } catch (error) {
+        console.error('An error occurred while loading data:', error)
+        this.rankBox = ['Error']
+      }
+    }
   }
 }
 </script>
