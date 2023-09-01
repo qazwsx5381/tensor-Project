@@ -1,25 +1,20 @@
 <template>
   <div class="width">
-    <Content />
     <Header />
+    <Adv />
     <Footer />
   </div>
 </template>
 <script>
-import Content from '../components/Content.vue'
 import Header from '../components/Header.vue'
+import Adv from '../components/Adv.vue'
 import Footer from '../components/Footer.vue'
 export default {
   components: {
-    Content,
     Header,
+    Adv,
     Footer
   }
 }
 </script>
-<style scoped>
-div.width {
-  width: auto;
-  margin: auto;
-}
-</style>
+<style scoped></style>
