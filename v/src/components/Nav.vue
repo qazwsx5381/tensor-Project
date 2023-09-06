@@ -1,6 +1,20 @@
 <template>
   <section class="best-sellers">
-    <h3 class="section-title">베스트셀러</h3>
+    <div class="best_title">
+      <img
+        class="arrow"
+        src="../assets/chevron_left_FILL0_wght400_GRAD0_opsz24.svg"
+        alt=""
+        @click="scrollLeft()"
+      />
+      <h3 class="section-title">베스트셀러</h3>
+      <img
+        class="arrow"
+        src="../assets/chevron_right_FILL0_wght400_GRAD0_opsz24.svg"
+        alt=""
+        @click="scrollRight()"
+      />
+    </div>
     <div class="book-list">
       <div v-for="(item, itemIndex) in items" :key="itemIndex" class="item">
         <div class="item-cover">
@@ -35,7 +49,8 @@ export default {
   data() {
     return {
       items: [],
-      numberFormat: new Intl.NumberFormat('ko-KR')
+      numberFormat: new Intl.NumberFormat('ko-KR'),
+      test: false
     }
   },
   mounted() {
@@ -59,9 +74,10 @@ export default {
     },
     scrollTable() {
       const wrapper = document.querySelector('.book-list')
-      let test = false
+      const left = document.querySelectorAll('.arrow')[0]
+      const right = document.querySelectorAll('.arrow')[1]
       setInterval(() => {
-        if (!test) {
+        if (!this.test) {
           wrapper.scrollLeft = wrapper.scrollLeft + 224
 
           if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
@@ -70,10 +86,42 @@ export default {
         }
       }, 2000)
       wrapper.addEventListener('mouseover', () => {
-        test = true
+        this.test = true
       })
       wrapper.addEventListener('mouseleave', () => {
-        test = false
+        this.test = false
+      })
+      left.addEventListener('mouseover', () => {
+        this.test = true
+      })
+      left.addEventListener('mouseleave', () => {
+        this.test = false
+      })
+      right.addEventListener('mouseover', () => {
+        this.test = true
+      })
+      right.addEventListener('mouseleave', () => {
+        this.test = false
+      })
+    },
+    scrollLeft() {
+      const left = document.querySelectorAll('.arrow')[0]
+      const wrapper = document.querySelector('.book-list')
+      left.addEventListener('click', () => {
+        wrapper.scrollLeft = wrapper.scrollLeft - 224
+        if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
+          wrapper.scrollLeft = 0
+        }
+      })
+    },
+    scrollRight() {
+      const right = document.querySelectorAll('.arrow')[1]
+      const wrapper = document.querySelector('.book-list')
+      right.addEventListener('click', () => {
+        wrapper.scrollLeft = wrapper.scrollLeft + 224
+        if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
+          wrapper.scrollLeft = wrapper.scrollWidth
+        }
       })
     }
   }
@@ -95,6 +143,18 @@ section.best-sellers {
   margin: 0;
 }
 
+div.best_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 10px;
+}
+
+img.arrow {
+  height: 36px;
+  border: 1.5px solid black;
+  cursor: pointer;
+}
 /* Add margin between section title and list */
 .book-list {
   width: 100%;
@@ -131,7 +191,9 @@ section.best-sellers {
   width: calc(20% - 20px); /* Adjust the width for 5 items per row */
   margin-bottom: 20px; /* Add some space between rows */
 }
-
+a {
+  display: flex;
+}
 .item:first-child {
   display: flex;
   flex-direction: column;
