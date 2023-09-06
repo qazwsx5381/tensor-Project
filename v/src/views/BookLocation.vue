@@ -32,6 +32,20 @@
         </div>
       </div>
     </div>
+    <div class="selection">
+      <h3 class="location">임의 위치</h3>
+      <!-- <select name="" id="location" onchange="console.log(this.value)"> -->
+      <select name="location" id="location" v-model="selectedLocation">
+        <option value="" disabled selected>역을 선택하세요</option>
+        <option value="35.1699, 129.1329">센텀시티</option>
+        <option value="37.5546, 126.9716">서울역</option>
+        <option value="36.3324, 127.4342">대전역</option>
+        <option value="35.115, 129.0412">부산역</option>
+      </select>
+      <button class="location" @click="displayIn(sel_let, sel_lon)">
+        선택한 위치
+      </button>
+    </div>
   </section>
 </template>
 <script>
@@ -41,13 +55,29 @@ export default {
     return {
       latitude: '',
       longitude: '',
+      Newlatitude: '',
+      Newlongitude: '',
       textContent: '',
       infowindow: null,
       load_location: false,
       iwPosition: '',
       lat: '',
       lon: '',
-      store_location: ''
+      sel_lat: '',
+      sel_lon: '',
+      store_location: '',
+      selectedLocation: '',
+      markers: []
+    }
+  },
+  watch: {
+    selectedLocation: function (value) {
+      if (value) {
+        const [lat, lon] = value.split(', ')
+        this.sel_let = parseFloat(lat)
+        this.sel_lon = parseFloat(lon)
+        this.displayIn(this.sel_let, this.sel_lon)
+      }
     }
   },
   mounted() {
@@ -82,9 +112,14 @@ export default {
         this.map.setCenter(this.infowindow.getPosition())
         return
       }
-      const iwContent = '<div style="padding:5px;">현재 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+      const iwContent = '<div id="point" style="padding:5px;">현재 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
       const iwPosition = new kakao.maps.LatLng(this.latitude, this.longitude) // 인포윈도우 표시 위치입니다
       const iwRemoveable = true // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+      if (this.infowindow && this.infowindow.getMap()) {
+        // 이미 생성한 인포윈도우가 있으면 닫기
+        this.infowindow.close()
+      }
 
       this.infowindow = new kakao.maps.InfoWindow({
         map: this.map, // 인포윈도우가 표시될 지도
@@ -95,6 +130,10 @@ export default {
 
       this.map.setCenter(iwPosition)
       this.store()
+
+      setTimeout(() => {
+        this.infowindow.close()
+      }, 3000) // 시간을 밀리초 단위로 설정
     },
     geofind() {
       if (!('geolocation' in navigator)) {
@@ -117,9 +156,14 @@ export default {
       )
     },
     displayInfo(lat, lon) {
-      const iwContent = '<div style="padding:5px;">서점 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+      const iwContent = '<div id="point" style="padding:5px;">서점 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
       const iwPosition = new kakao.maps.LatLng(lat, lon) // 인포윈도우 표시 위치입니다
       const iwRemoveable = true // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+      if (this.infowindow && this.infowindow.getMap()) {
+        // 이미 생성한 인포윈도우가 있으면 닫기
+        this.infowindow.close()
+      }
 
       this.infowindow = new kakao.maps.InfoWindow({
         map: this.map, // 인포윈도우가 표시될 지도
@@ -129,15 +173,40 @@ export default {
       })
 
       this.map.setCenter(iwPosition)
-      this.store()
+      setTimeout(() => {
+        this.infowindow.close()
+      }, 1500) // 초를 밀리초 단위로 설정
     },
-    store() {
-      axios
-        .post('BstoreInfo', { lat: this.latitude, lon: this.longitude })
-        .then((res) => {
-          this.store_location = res.data
-          this.load_location = true
-        })
+    store(lat = this.latitude, lon = this.longitude) {
+      axios.post('/BstoreInfo', { lat: lat, lon: lon }).then((res) => {
+        this.store_location = res.data
+        this.load_location = true
+      })
+    },
+    displayIn(lat, lon) {
+      console.log(lat, lon)
+      const iwContent =
+        '<div id="point" style="padding:5px;">새로운 위치!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+      const iwPosition = new kakao.maps.LatLng(lat, lon) // 인포윈도우 표시 위치입니다
+      const iwRemoveable = true // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+      if (this.infowindow && this.infowindow.getMap()) {
+        // 이미 생성한 인포윈도우가 있으면 닫기
+        this.infowindow.close()
+      }
+
+      this.infowindow = new kakao.maps.InfoWindow({
+        map: this.map, // 인포윈도우가 표시될 지도
+        position: iwPosition,
+        content: iwContent,
+        removable: iwRemoveable
+      })
+
+      this.map.setCenter(iwPosition)
+      this.store(lat, lon)
+      setTimeout(() => {
+        this.infowindow.close()
+      }, 1500) // 초를 밀리초 단위로 설정
     }
   }
 }
@@ -213,5 +282,19 @@ button:hover {
 div#store_line button:hover {
   background-color: #dfdfdf;
   color: black;
+}
+div.selection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h3.location {
+  margin-right: 20px;
+  font-size: 20px;
+}
+select#location {
+  width: 130px;
+  height: 30px;
+  margin-right: 15px;
 }
 </style>
