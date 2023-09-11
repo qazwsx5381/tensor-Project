@@ -88,14 +88,12 @@ export default {
   text-align: center;
 }
 
-/* Updated styles for section title */
 .section-title {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* Add margin between section title and list */
 .book-list {
   margin-top: 20px;
   display: flex;
@@ -103,7 +101,7 @@ export default {
 }
 
 .item-list-horizontal {
-  flex-wrap: wrap; /* Added to wrap items to the next line */
+  flex-wrap: wrap;
   list-style: none;
   margin: 0;
 }
@@ -111,8 +109,8 @@ export default {
 .item-group {
   display: flex;
   justify-content: space-between;
-  width: calc(20% - 20px); /* Adjust the width for 5 items per row */
-  margin-bottom: 20px; /* Add some space between rows */
+  width: calc(20% - 20px);
+  margin-bottom: 20px;
 }
 
 .item {
