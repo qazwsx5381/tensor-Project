@@ -49,7 +49,6 @@ app.post('/about', async (req, response) => {
       response.send(send_data)
     } else {
       const tensorData = await QR_tensor(data.EA_ISBN)
-      console.log(tensorData)
       const send_data = {
         bookname: data.TITLE,
         img: tensorData.imgLink,
@@ -60,7 +59,6 @@ app.post('/about', async (req, response) => {
         tensor: tensorData.data,
         rating: tensorData.rating
       }
-      console.log(send_data)
       response.send(send_data)
     }
   })
@@ -557,6 +555,27 @@ app.post('/realTime', (req, res) => {
       })
       res.send(rank)
     })
+})
+
+app.post('/getBook', (req, res) => {
+  const url = `
+  https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${Alkey2}&QueryType=ItemNewAll&MaxResults=20&start=1&SearchTarget=Book&output=js&Version=20131101&Cover=Big&CategoryId=${req.body.ID}`
+  request.get(url, (e, response, body) => {
+    const data = JSON.parse(body).item
+    const title = data.map((v) => {
+      return v.title
+    })
+    const author = data.map((v) => {
+      return v.author
+    })
+    const img = data.map((v) => {
+      return v.cover
+    })
+    const link = data.map((v) => {
+      return v.link
+    })
+    res.send({ title, author, img, link })
+  })
 })
 
 /* ================================================================================== */
