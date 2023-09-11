@@ -61,7 +61,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .centered-book-list {
   display: flex;
   justify-content: center;
@@ -69,6 +69,7 @@ export default {
 
 .book-list {
   margin: 0 auto;
+  width: 900px;
 }
 
 .item-list {

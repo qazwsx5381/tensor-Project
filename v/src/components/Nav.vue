@@ -78,7 +78,7 @@ export default {
       const right = document.querySelectorAll('.arrow')[1]
       setInterval(() => {
         if (!this.test) {
-          wrapper.scrollLeft = wrapper.scrollLeft + 224
+          wrapper.scrollLeft = wrapper.scrollLeft + 244
 
           if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
             wrapper.scrollLeft = 0
@@ -108,7 +108,7 @@ export default {
       const left = document.querySelectorAll('.arrow')[0]
       const wrapper = document.querySelector('.book-list')
       left.addEventListener('click', () => {
-        wrapper.scrollLeft = wrapper.scrollLeft - 224
+        wrapper.scrollLeft = wrapper.scrollLeft - 244
         if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
           wrapper.scrollLeft = 0
         }
@@ -118,7 +118,7 @@ export default {
       const right = document.querySelectorAll('.arrow')[1]
       const wrapper = document.querySelector('.book-list')
       right.addEventListener('click', () => {
-        wrapper.scrollLeft = wrapper.scrollLeft + 224
+        wrapper.scrollLeft = wrapper.scrollLeft + 244
         if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
           wrapper.scrollLeft = wrapper.scrollWidth
         }
@@ -194,20 +194,11 @@ img.arrow {
 a {
   display: flex;
 }
-.item:first-child {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 20px;
-  padding: 1px;
-  background-color: rgb(250, 249, 249);
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 .item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: 20px;
   margin-right: 20px;
   padding: 1px;
   background-color: rgb(250, 249, 249);
@@ -218,6 +209,10 @@ a {
 .item-cover {
   margin-bottom: 10px;
   border: 1px solid #000;
+}
+
+.item-cover a img {
+  margin: none;
 }
 
 .item-details {
