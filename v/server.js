@@ -140,7 +140,6 @@ async function main(event) {
     const _data = {
       id: event.id,
       pw: CryptoJS.AES.encrypt(event.pw, event.id).toString(),
-      // CryptoJS.AES.encrypt('my message', 'secret key 123').toString()
       name: event.name,
       mail: event.mail
     }
@@ -194,7 +193,7 @@ async function logout(event) {
         { _id: 0, __v: 0 }
       )
       .lean() // p349 설명 효율적 메소드
-    return
+    return t
   } catch (error) {
     console.error
   }
