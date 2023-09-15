@@ -5,14 +5,12 @@
         class="arrow"
         src="../assets/chevron_left_FILL0_wght400_GRAD0_opsz24.svg"
         alt=""
-        @click="scrollLeft()"
       />
       <h3 class="section-title">베스트셀러</h3>
       <img
         class="arrow"
         src="../assets/chevron_right_FILL0_wght400_GRAD0_opsz24.svg"
         alt=""
-        @click="scrollRight()"
       />
     </div>
     <div class="book-list">
@@ -56,6 +54,8 @@ export default {
   mounted() {
     this.fetchData()
     this.scrollTable()
+    this.scrollCreate()
+    this.drag()
   },
   methods: {
     fetchData() {
@@ -76,32 +76,45 @@ export default {
       const wrapper = document.querySelector('.book-list')
       const left = document.querySelectorAll('.arrow')[0]
       const right = document.querySelectorAll('.arrow')[1]
+      wrapper.style.scrollBehavior = 'smooth'
       setInterval(() => {
         if (!this.test) {
           wrapper.scrollLeft = wrapper.scrollLeft + 244
 
-          if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
-            wrapper.scrollLeft = 0
+          if (
+            wrapper.offsetWidth + wrapper.scrollLeft + 244 >=
+            wrapper.scrollWidth
+          ) {
+            const items = wrapper.querySelectorAll('.item')
+            items.forEach((item) => {
+              const newItem = item.cloneNode(true)
+              wrapper.appendChild(newItem)
+            })
+            wrapper.scrollLeft = wrapper.scrollLeft + 244
           }
         }
       }, 2000)
       wrapper.addEventListener('mouseover', () => {
         this.test = true
+        wrapper.style.scrollBehavior = 'auto'
       })
       wrapper.addEventListener('mouseleave', () => {
         this.test = false
+        wrapper.style.scrollBehavior = 'smooth'
       })
       left.addEventListener('mouseover', () => {
         this.test = true
       })
       left.addEventListener('mouseleave', () => {
         this.test = false
+        wrapper.style.scrollBehavior = 'smooth'
       })
       right.addEventListener('mouseover', () => {
         this.test = true
       })
       right.addEventListener('mouseleave', () => {
         this.test = false
+        wrapper.style.scrollBehavior = 'smooth'
       })
     },
     scrollLeft() {
@@ -119,8 +132,61 @@ export default {
       const wrapper = document.querySelector('.book-list')
       right.addEventListener('click', () => {
         wrapper.scrollLeft = wrapper.scrollLeft + 244
-        if (wrapper.offsetWidth + wrapper.scrollLeft >= wrapper.scrollWidth) {
-          wrapper.scrollLeft = wrapper.scrollWidth
+        if (
+          wrapper.offsetWidth + wrapper.scrollLeft + 224 >=
+          wrapper.scrollWidth
+        ) {
+          const items = wrapper.querySelectorAll('.item')
+          items.forEach((item) => {
+            const newItem = item.cloneNode(true)
+            wrapper.appendChild(newItem)
+          })
+          wrapper.scrollLeft = wrapper.scrollLeft + 244
+        }
+      })
+    },
+    scrollCreate() {
+      const right = document.querySelectorAll('.arrow')[1]
+      right.addEventListener('click', this.scrollRight())
+      const left = document.querySelectorAll('.arrow')[0]
+      left.addEventListener('click', this.scrollLeft())
+    },
+    drag() {
+      const slider = document.querySelector('.book-list')
+
+      let isDown = false
+      let startX
+      let scrollLeft
+
+      slider.addEventListener('mousedown', (e) => {
+        isDown = true
+        slider.classList.add('active')
+        startX = e.pageX - slider.offsetLeft
+        scrollLeft = slider.scrollLeft
+      })
+      slider.addEventListener('mouseleave', () => {
+        isDown = false
+        slider.classList.remove('active')
+      })
+      slider.addEventListener('mouseup', () => {
+        isDown = false
+        slider.classList.remove('active')
+      })
+      slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return
+        e.preventDefault()
+        const x = e.pageX - slider.offsetLeft
+        const walk = x - startX // scroll-fast
+        slider.scrollLeft = scrollLeft - walk
+        console.log(slider.scrollLeft - walk)
+        console.log(slider.scrollWidth)
+        if (slider.scrollLeft - walk + 1000 >= slider.scrollWidth) {
+          const items = slider.querySelectorAll('.item')
+          items.forEach((item) => {
+            const newItem = item.cloneNode(true)
+            slider.appendChild(newItem)
+          })
+          slider.scrollLeft = scrollLeft - walk
         }
       })
     }
@@ -132,7 +198,8 @@ export default {
 section.best-sellers {
   text-align: center;
   width: 900px;
-  overflow: auto;
+  overflow-x: scroll;
+  overflow-y: hidden;
   display: inline;
 }
 
@@ -159,13 +226,17 @@ img.arrow {
 .book-list {
   width: 100%;
   margin-top: 20px;
+  position: relative;
   display: flex;
   overflow-x: scroll;
-  scroll-behavior: smooth;
+  overflow-y: hidden;
   justify-content: start;
+  transition: all;
+  will-change: transform;
+  user-select: none;
 }
 .book-list::-webkit-scrollbar {
-  width: 10px;
+  display: none;
 }
 .book-list::-webkit-scrollbar-thumb {
   background-color: #b1b1b1;
@@ -178,7 +249,10 @@ img.arrow {
   background-color: white;
   border-radius: 10px;
 }
-
+.active {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
 .item-list-horizontal {
   flex-wrap: wrap; /* Added to wrap items to the next line */
   list-style: none;

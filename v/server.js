@@ -63,7 +63,77 @@ app.post('/about', async (req, response) => {
     }
   })
 })
+load_url()
+async function load_url(book_isbn) {
+  try {
+    const book = encodeURI('1%를 읽는 힘')
+    console.log(book)
+    let url = `https://www.yes24.com/Product/Search?domain=ALL&query=${book}`
+    const response = await axios.get(url)
+    const $ = cheerio.load(response.data)
 
+    let LinkUrl = ''
+
+    // 이미지 태그를 선택하여 이미지 URL을 가져옴
+    $(
+      'ul#yesSchList li:first-child div.itemUnit div.item_info div.info_name a.gd_name'
+    ).each((index, element) => {
+      LinkUrl = $(element).attr('href')
+      console.log(LinkUrl)
+    })
+    const text = await assitant(LinkUrl)
+    console.log(text)
+    // return LinkUrl
+  } catch (error) {
+    console.error('Error :', error)
+    return
+  }
+}
+async function assitant(event) {
+  try {
+    let url = `https://www.yes24.com${event}`
+    const response = await axios.get(url)
+    const $ = cheerio.load(response.data)
+
+    let text = ''
+
+    $(
+      'div#infoset_introduce div.infoSetCont_wrap div.infoWrap_txt div.infoWrap_txtInner'
+    ).each((index, element) => {
+      text = $(element).text()
+    })
+    return text
+  } catch (error) {
+    console.error('Error fetching images:', error)
+    return
+  }
+}
+async function kogpt_api(
+  prompt,
+  max_tokens = 1,
+  temperature = 1.0,
+  top_p = 1.0,
+  n = 1
+) {
+  r = requests.post(
+    'https://api.kakaobrain.com/v1/inference/kogpt/generation',
+    (json = {
+      prompt: prompt,
+      max_tokens: max_tokens,
+      temperature: temperature,
+      top_p: top_p,
+      n: n
+    }),
+    (headers = {
+      Authorization: 'KakaoAK ' + REST_API_KEY,
+      'Content-Type': 'application/json'
+    })
+  )
+  // # 응답 JSON 형식으로 변환
+  response = json.loads(r.content)
+  return response
+}
+// 로그인 구현
 app.post('/', async (req, response) => {
   try {
     const data = req.body
@@ -591,7 +661,7 @@ const getSSLOptions = {
 
 // https 서버 열기
 https.createServer(getSSLOptions, app).listen(3000, () => {
-  console.log(`[Server] listening on port 8080`)
+  console.log(`[Server] listening on port 3000`)
 })
 
 /** ===================사용안함=================== */

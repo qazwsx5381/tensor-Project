@@ -75,6 +75,10 @@ export default {
   background-color: rgb(50, 37, 235);
   margin: 10px;
 }
+#img:hover {
+  transform: scale(1.15);
+  transition: transform 0.5s;
+}
 
 div.book_info {
   display: flex;

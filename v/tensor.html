@@ -125,7 +125,7 @@
         /* 3. 모델로 훈련 시작 */
         const f_param = {
           batchSize: 256,
-          epochs: 100,
+          epochs: 500,
           callbacks: {
             onEpochEnd: (e, l) => {
               console.log('epoch : ', e, l, 'RMSE=>', Math.sqrt(l.loss))
@@ -137,7 +137,7 @@
           await model.fit(xs, ys, f_param)
           //   await model.fit(xs, ys, fitParam)
           await model.predict(zs).print()
-          // await model.save('downloads://my_custom_model')
+          await model.save('downloads://my_custom_model')
           let result_data = await model.predict(zs).data()
           let result = await model.predict(tf.tensor([[19800, 50000]])).print()
           const result2 = Array.from(result_data).map((v, i) => {

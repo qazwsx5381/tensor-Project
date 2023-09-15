@@ -96,6 +96,11 @@ export default {
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
 }
 
+.item-cover img:hover {
+  transform: scale(1.15);
+  transition: transform 0.5s;
+}
+
 .item-details {
   margin-left: 20px;
   flex-grow: 1;

@@ -63,26 +63,32 @@
         </div>
         <div class="rating">
           <span class="list">실제평점</span>
-          <div class="list_text">
-            <span
-              v-for="star in 5"
-              :key="star"
-              :class="['star', star <= ratingscore / 2 ? 'filled' : '']"
-            >
-              ★
-            </span>
+          <div class="score">
+            <div class="list_text">
+              <span
+                v-for="star in 5"
+                :key="star"
+                :class="['star', star <= ratingscore / 2 ? 'filled' : '']"
+              >
+                ★
+              </span>
+            </div>
+            <span>{{ ratingscore }}</span>
           </div>
         </div>
         <div class="rating">
           <span class="list">예측평점</span>
-          <div class="list_text">
-            <span
-              v-for="star in 5"
-              :key="star"
-              :class="['star', star <= score / 2 ? 'filled' : '']"
-            >
-              ★
-            </span>
+          <div class="score">
+            <div class="list_text">
+              <span
+                v-for="star in 5"
+                :key="star"
+                :class="['star', star <= score / 2 ? 'filled' : '']"
+              >
+                ★
+              </span>
+            </div>
+            <span>{{ score.toFixed(1) }}</span>
           </div>
         </div>
       </div>
@@ -268,6 +274,17 @@ img#load_image {
   display: flex;
   align-items: center;
   margin: 5px 0;
+}
+div.score {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  align-items: center;
+}
+div.score div.list_text {
+  margin: 5px 0;
+  vertical-align: middle;
+  height: 24px;
 }
 .list_text {
   width: 70%;

@@ -26,7 +26,6 @@ export default {
       try {
         axios.post('/realTime').then((res) => {
           this.rankBox = res.data
-          console.log(this.rankBox)
         })
       } catch (error) {
         console.error('An error occurred while loading data:', error)

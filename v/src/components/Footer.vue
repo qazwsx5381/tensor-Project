@@ -45,9 +45,9 @@ export default {
   flex-direction: column;
 }
 #container {
+  background-image: url('https://img.freepik.com/free-photo/design-space-paper-textured-background_53876-139913.jpg?w=1380&t=st=1694674439~exp=1694675039~hmac=f5e45093a831d978b6d48d4edd08b7fc0c671e538b8e78622d8e66541915c44b');
   width: 1200px;
   height: 300px;
-  background-color: rgb(119, 119, 119);
   margin: 10px;
   border-radius: 15px;
   display: flex;
@@ -57,7 +57,7 @@ export default {
 }
 
 p {
-  color: white;
+  color: black;
 }
 p.text {
   display: inline-block;

@@ -61,7 +61,7 @@
           </div>
           <div class="Scontent">
             <span class="Fix_content">내용</span
-            ><span class="EditContent">{{ content_board }}</span>
+            ><span class="EditContent height">{{ content_board }}</span>
           </div>
           <div class="Scontent">
             <span class="Fix_content">작성자</span
@@ -455,6 +455,10 @@ span.EditContent {
   margin-left: 0;
   padding: 10px;
   color: white;
+}
+span.height {
+  min-height: 200px;
+  height: auto;
 }
 
 tr th:first-child {
