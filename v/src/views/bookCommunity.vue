@@ -18,7 +18,9 @@
             <tbody>
               <tr class="viewContent" v-for="(v, i) in displayedPosts" :key="i">
                 <td @click="showBoard(i)">{{ v.boardnum }}</td>
-                <td @click="showBoard(i)">{{ v.title }}</td>
+                <td @click="showBoard(i)">
+                  <span class="Showtitle">{{ v.title }}</span>
+                </td>
                 <td @click="showBoard(i)">
                   {{ decodeURI(v.name) }}({{ v.id }})
                 </td>
@@ -61,7 +63,7 @@
           </div>
           <div class="Scontent">
             <span class="Fix_content">내용</span
-            ><span class="EditContent height">{{ content_board }}</span>
+            ><span class="EditContent">{{ content_board }}</span>
           </div>
           <div class="Scontent">
             <span class="Fix_content">작성자</span
@@ -434,31 +436,23 @@ div.Scontent {
   width: 60%;
   margin: auto;
 }
-div.Scontent:nth-child(3) span.Fix_content,
-div.Scontent:nth-child(3) span.EditContent {
-  height: 200px;
-}
 span.Fix_content {
   width: 100px;
   height: 26px;
   margin: 5px;
   padding: 5px 0;
-  border-right: 2px solid white;
   color: white;
   margin-right: 0;
 }
 span.EditContent {
-  width: 400px;
-  height: 26px;
+  width: 600px;
+  height: auto;
   text-align: left;
+  border-left: 2px solid white;
   margin: 5px;
   margin-left: 0;
   padding: 10px;
   color: white;
-}
-span.height {
-  min-height: 200px;
-  height: auto;
 }
 
 tr th:first-child {
@@ -466,7 +460,7 @@ tr th:first-child {
   height: 44px;
 }
 tr th:nth-child(2) {
-  width: 50%;
+  width: 600px;
   height: 44px;
 }
 tr th:nth-child(3) {
@@ -483,5 +477,15 @@ tr th:nth-child(5) {
 }
 tr.viewContent:hover {
   background-color: #d3d3d39d;
+}
+
+span.Showtitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 350px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 </style>
